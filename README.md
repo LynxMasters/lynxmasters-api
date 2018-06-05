@@ -13,14 +13,22 @@ Lynxmasters Api
 
 To contribute to this project we ask that everyone follow the processes needed to avoid conflicts and issues with development lifecycle.
 
-1. Create your own work branch following the described nomanclature:
+1. Following the issue tracker, pick your selected work focus
+2. Create your own work branch following the described nomanclature:
  `name/user-endpoints` or `name/email-verification`
 
-2. Commit and push your local changes to remote
-3. Open a Pull Request (Resolve any merge conflicts if needed)
-4. Add the following reviewers
-  @ianarsenault @j-arsenault @tylerdcorwin @nmonty9
-5. Once peer reviewed your pull request will either be merged or changes will be requested
+3. Commit and push your local changes to remote, adding the issue # you're working on in the commit message. This will reference your commit in the issue.
+
+Example: `"#ISSUE_NUMBER: commit message"`
+
+```sh
+$ git commit -m "#12: user endpoints completed"
+```
+
+4. Open a Pull Request (Resolve any merge conflicts if needed)
+5. Add the following reviewers
+  **@ianarsenault** **@j-arsenault** **@tylerdcorwin** **@nmonty9**
+6. Once peer reviewed your pull request will either be merged or changes will be requested
 
 
 
