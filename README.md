@@ -13,14 +13,14 @@ Lynxmasters Api
 
 To contribute to this project we ask that everyone follow the processes needed to avoid conflicts and issues with development lifecycle.
 
-1. Create your own work branch following the nomanclature
-Example: `ian/user-endpoints` or `tyler/testing-email-verification`
+1. Create your own work branch following the described nomanclature:
+ `name/user-endpoints` or `name/email-verification`
 
 2. Commit and push your local changes to remote
 3. Open a Pull Request (Resolve any merge conflicts if needed)
 4. Add the following reviewers
   @ianarsenault @j-arsenault @tylerdcorwin @nmonty9
-5. Once peer reviewed your changes will either be merged or changes will be requested
+5. Once peer reviewed your pull request will either be merged or changes will be requested
 
 
 
@@ -64,8 +64,11 @@ $ npm install
 $ npm run dev
 ```
 3. Test the API by making various calls
+
 Example: `http://localhost:8081/api/v1/users`
+
 4. Should return the following
+
 ![Alt Text](https://i.imgur.com/nPafL4e.gif)
 
 ## Testing SendGrid Locally
