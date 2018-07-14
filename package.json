@@ -4,7 +4,9 @@
   "description": "Lynxmasters Api",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node ./bin/www",
+    "dev": "DEBUG=server:* nodemon ./bin/www",
+    "dev:pc": "SET DEBUG=server:* & nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,9 +21,23 @@
   },
   "homepage": "https://github.com/LynxMasters/lynxmasters-api#readme",
   "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "express-debug": "^1.1.1",
+    "moment": "^2.22.2",
+    "mongoose": "^5.2.3",
+    "mongoose-unique-validator": "^2.0.1",
+    "morgan": "^1.9.0",
+    "nodemon": "^1.18.2",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "uid-generator": "^1.0.0",
+    "validator": "^10.4.0"
   }
 }
