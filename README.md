@@ -23,7 +23,7 @@ To contribute to this project we ask that everyone follow the processes needed t
 Example: `"#ISSUE_NUMBER: commit message"`
 
 ```sh
-$ git commit -m "#12: user endpoints completed"
+git commit -m "#12: user endpoints completed"
 ```
 
 4. Open a Pull Request (Resolve any merge conflicts if needed)
@@ -40,21 +40,27 @@ $ git commit -m "#12: user endpoints completed"
 To run MongoDB
 
 ```sh
-$ mongod
+# starts mongodb
+mongod
 ```
 
 To run API
 
 ```sh
-$ cd path/to/project/root
-$ npm install
-$ npm run dev
+cd path/to/project/root
+
+# install dependencies
+npm install
+
+# run server at localhost:8081
+npm run dev
 ```
 
 For PC
 
 ```sh
-$ npm run dev:pc
+# run server at localhost:8081
+npm run dev:pc
 ```
 
 
@@ -65,12 +71,17 @@ To test out the API and various calls use a REST Client ([Insomnia](https://inso
 1. Open up your REST Client of choice
 2. Make sure MongoDB and the server is running
 ```sh
-$ mongod
+# starts mongodb
+mongod
 ```
 ```sh
-$ cd path/to/project/root
-$ npm install
-$ npm run dev
+cd path/to/project/root
+
+# install dependencies
+npm install
+
+# run server at localhost:8081
+npm run dev
 ```
 3. Test the API by making various calls
 
@@ -83,13 +94,17 @@ Example: `http://localhost:8081/api/v1/users`
 ## Testing SendGrid Locally
 1. In server directory, create a new directory called `config`
 ```sh
-$ cd path/to/project/root
-$ mkdir config
-$ cd config
+cd path/to/project/root
+
+# creates config directory
+mkdir config
+
+cd config
 ```
 2. Create a `.env` file for sendgrid variables
 ```sh
-$ echo "SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
+# create .env file named sendgrid.env
+echo "SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
 ```
 3. Open up `sendgrid.env` and edit it to the following
 ```sh
