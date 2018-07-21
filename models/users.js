@@ -89,7 +89,7 @@ function addUser(request) {
         reject(error)
       } else {
         // Send email verification
-        //sendEmailVerification(user)
+        sendEmailVerification(user)
 
         // remove user: user, once done testing
         let cleanUser = user.toObject()
@@ -138,6 +138,17 @@ function loginUser(request) {
             }
           })
         }
+    })
+  })
+}
+
+function userVerificationCheck(req) {
+  return new Promise((resolve, reject) => {
+    Users.findOneAndUpdate({ emailConfirmationToken: req.params.emailToken },
+      { $set: { active: true } },
+      { new: true }, (error, user) => {
+        if (error){ reject(error) }
+        resolve(user)
     })
   })
 }
@@ -194,7 +205,7 @@ function sendEmailVerification(user) {
     to: user.email,
     from:  process.env.NO_REPLY_EMAIL,
     subject: process.env.SUBJECT,
-    html: '<p>Hello, thank you for signing up with <strong>Lynxmasters</strong>!<br>Please click the following link to verify your email.<br></p><a href="http://localhost:8080/?id=' + user._id +'&email_id=' + user.emailConfirmationToken + '" target="_blank">Verify your email for Lynxmasters</a>',
+    html: '<p>Hello, thank you for signing up with <strong>Lynxmasters</strong>!<br>Please click the following link to verify your email.<br></p><a href="http://localhost:8080/verification?id=' + user._id +'&email_id=' + user.emailConfirmationToken + '" target="_blank">Verify your email for Lynxmasters</a>',
   };
   sgMail.send(msg)
 }
@@ -204,5 +215,6 @@ module.exports = {
   fetchOne,
   updateOne,
   removeOne,
-  loginUser
+  loginUser,
+  userVerificationCheck
 }
