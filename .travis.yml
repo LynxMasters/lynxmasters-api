@@ -1,0 +1,33 @@
+# Required to run your project under the correct environment.
+language: node_js
+
+# Versions of NodeJS you want your project run with.
+node_js:
+  - "6"
+
+# Cache dependencies to speed up build
+cache:
+  directories:
+    - "node_modules"
+
+# Run services
+services: mongodb
+
+# install dependencies
+install:
+  - npm install
+
+# verify your build
+script:
+  - npm test
+
+# Setup notifications
+notifications:
+  slack:
+    rooms:
+      - lynxmasters:4vs2L1qfNvfNIBBY7v1JgCD0#general
+    on_success: always
+    on_failure: always
+  email:
+    on_success: never
+    on_failure: always
