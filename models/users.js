@@ -143,13 +143,27 @@ function loginUser(request) {
 }
 
 function userVerificationCheck(req) {
+  console.log(req)
   return new Promise((resolve, reject) => {
-    Users.findOneAndUpdate({ emailConfirmationToken: req.params.emailToken },
+    Users.findOneAndUpdate({
+        $and : [
+            { _id: req.params.id },
+            { emailConfirmationToken: req.params.emailToken }
+          ]
+      },
       { $set: { active: true } },
       { new: true }, (error, user) => {
-        if (error){ reject(error) }
-        resolve(user)
-    })
+        if (error){
+          console.log(error)
+          reject(error)
+        }
+        let cleanUser = {}
+        cleanUser.firstName = user.firstName
+        cleanUser.lastName = user.lastName
+        cleanUser.email = user.email
+        resolve(cleanUser)
+      })
+
   })
 }
 
