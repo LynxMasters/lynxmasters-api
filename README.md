@@ -1,5 +1,7 @@
 # lynxmasters-api
 
+[![Build Status](https://travis-ci.org/LynxMasters/lynxmasters-api.svg?branch=master)](https://travis-ci.org/LynxMasters/lynxmasters-api)
+
 Lynxmasters Api
 [Lynxmasters UI](https://github.com/LynxMasters/lynxmasters-ui)
 
