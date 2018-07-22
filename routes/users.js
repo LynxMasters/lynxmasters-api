@@ -54,11 +54,17 @@ module.exports = (app) => {
     )
   })
 
-  // test session
-  // app.get(`${path}/auth/session`, (req, res) => {
-  //   let sessionUserId = req.session
-  //   res.send(`Print out session details: ${JSON.stringify(sessionUserId)} \n sessoin id = ${JSON.stringify(sessionUserId.id)}`);
-  // })
+  // Verify Users Identifiers
+  app.post(`${path}/users/identifiers/`, (req, res) => {
+    Users.userVerificationCheck(req.body).then(
+      (user) => {
+        res.send(user)
+      },
+      (err) => {
+        res.send(err)
+      }
+    )
+  })
 
   // Update a user
   app.put(`${path}/users/:id`, (req, res) => {
