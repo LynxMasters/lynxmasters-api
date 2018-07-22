@@ -19,7 +19,7 @@ install:
 
 # verify your build
 script:
-  - npm test
+  - npm run
 
 # Setup notifications
 notifications:
