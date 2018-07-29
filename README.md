@@ -46,6 +46,18 @@ To run MongoDB
 mongod
 ```
 
+
+Next you will need to configure an env file
+```bash
+cp example.env .env
+```
+
+Open the newly created .env file and update the environment:
+```
+DEV_UPLOAD_LOCATION="/your/path/to/lynxmasters-ui/static/uploads"
+NODE_ENV="dev"
+```
+
 To run API
 
 ```sh

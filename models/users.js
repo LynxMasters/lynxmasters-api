@@ -10,17 +10,10 @@ require('dotenv').config({path:'./config/sendgrid.env'})
 
 
 const schema = {
-  firstName: {
+  username: {
     type: String,
-    required: [true, 'First name is required'],
-    minlength: [2, 'Your first name is too short'],
-    maxlength: [50, 'Your first name is too long']
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Last name is required'],
-    minlength: [3, 'Your last name is too short'],
-    maxlength: [100, 'Your last name is too long']
+    required: [true, 'Username is required']
+    // index: { unique: true }
   },
   email: {
     type: String,
@@ -35,6 +28,42 @@ const schema = {
   },
   emailConfirmationToken: {
     type: String,
+  },
+  firstName: {
+    type: String,
+    required: [true, 'First name is required'],
+    minlength: [2, 'Your first name is too short'],
+    maxlength: [50, 'Your first name is too long']
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Last name is required'],
+    minlength: [3, 'Your last name is too short'],
+    maxlength: [100, 'Your last name is too long']
+  },
+  address: {
+    type: String,
+    required: [true, 'Address is required']
+  },
+  city: {
+    type: String,
+    required: [true, 'City is required']
+  },
+  state: {
+    type: String,
+    required: [true, 'State is required']
+  },
+  zipCode: {
+    type: String,
+    required: [true, 'Zip Code is required']
+  },
+  country: {
+    type: String,
+    required: [true, 'Country is required']
+  },
+  linkedAccounts: {
+    type: Boolean,
+    default: false
   },
   active: {
     type: Boolean,
@@ -74,11 +103,17 @@ Users.schema.pre('save', function(next) {
 function addUser(request) {
   const uidgen = new UIDGenerator(512, UIDGenerator.BASE62)
   let new_user = new Users({
-    firstName: request.firstName,
-    lastName: request.lastName,
+    username: request.username,
     email: request.email,
     password: request.password,
     emailConfirmationToken: uidgen.generateSync(UIDGenerator.BASE16),
+    firstName: request.firstName,
+    lastName: request.lastName,
+    address: request.address,
+    city: request.city,
+    state: request.state,
+    zipCode: request.zipCode,
+    country: request.country,
     active: this.active,
     role: this.role,
     dateCreated: this.dateCreated
@@ -89,7 +124,7 @@ function addUser(request) {
         reject(error)
       } else {
         // Send email verification
-        sendEmailVerification(user)
+        //sendEmailVerification(user)
 
         // remove user: user, once done testing
         let cleanUser = user.toObject()
