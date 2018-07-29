@@ -1,4 +1,5 @@
 let Users = require("../models/users")
+let multer  = require('multer')
 let path = '/api/v1';
 
 module.exports = (app) => {
@@ -90,6 +91,26 @@ module.exports = (app) => {
         console.error(err)
       }
     )
+  })
+
+  // Avatar upload
+  let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      let folder = process.env.NODE_ENV === 'production'
+        ? process.env.PROD_UPLOAD_LOCATION
+        : process.env.DEV_UPLOAD_LOCATION
+      cb(null, folder)
+    },
+    filename: function (req, file, cb) {
+      let ext = file.originalname.substr(file.originalname.lastIndexOf('.') + 1)
+      console.log('extension = ' + req.body.user+'.'+ext)
+      cb(null, req.body.user+'.'+ext)
+    }
+  })
+
+  let upload = multer({ storage: storage })
+  app.post(`${path}/uploads`, upload.single('image'), (req, res) => {
+    return res.json({ message: 'success', filename: req.file.filename})
   })
 
 

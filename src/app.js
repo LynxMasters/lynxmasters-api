@@ -5,7 +5,7 @@ const cors = require('cors')
 const logger = require('morgan')
 const session = require('express-session')
 const mongoStore = require('connect-mongo')(session)
-
+require('dotenv').config()
 
 const app = express()
 app.use(logger('combined'))
