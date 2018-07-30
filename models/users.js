@@ -75,6 +75,9 @@ const schema = {
     default: 'user',
     required: true
   },
+  avatar: {
+    type: String
+  },
   dateCreated: {
     type: Date,
     default: moment().format()
@@ -116,6 +119,7 @@ function addUser(request) {
     country: request.country,
     active: this.active,
     role: this.role,
+    avatar: request.avatar,
     dateCreated: this.dateCreated
   })
   return new Promise((resolve, reject) => {
