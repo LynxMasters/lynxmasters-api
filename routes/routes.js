@@ -10,7 +10,7 @@ const request = require ('request');
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
         res.render('profile.ejs', {
-            user : req.user
+            account : req.account
         });
     });
 
@@ -60,7 +60,7 @@ const request = require ('request');
             }
          ));
 
-        // handle the callback after twitch has authenticated the user
+        // handle the callback after twitch has authenticated the account
         app.get('/auth/twitch/callback',
             passport.authenticate('twitch', {
                 successRedirect : '/profile',
@@ -72,7 +72,7 @@ const request = require ('request');
         // send to twitter to do the authentication
         app.get('/auth/twitter', passport.authenticate('twitter', { scope : 'email' }));
 
-        // handle the callback after twitter has authenticated the user
+        // handle the callback after twitter has authenticated the account
         app.get('/auth/twitter/callback',
             passport.authenticate('twitter', {
                 successRedirect : '/profile',
@@ -90,7 +90,7 @@ const request = require ('request');
                 scope: 'identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote'
             }));
 
-        // the callback after reddit has authenticated the user
+        // the callback after reddit has authenticated the account
         app.get('/auth/reddit/callback',
             passport.authenticate('reddit', {
                 successRedirect : '/profile',
@@ -116,7 +116,7 @@ const request = require ('request');
         // send to twitch to do the authentication
         app.get('/connect/twitch', passport.authorize('twitch', { scope :'user_read' }));
 
-        // handle the callback after twitch has authorized the user
+        // handle the callback after twitch has authorized the account
         app.get('/connect/twitch/callback',
             passport.authorize('twitch', {
                 successRedirect : '/profile',
@@ -128,7 +128,7 @@ const request = require ('request');
         // send to twitter to do the authentication
         app.get('/connect/twitter', passport.authorize('twitter', { scope : 'email' }));
 
-        // handle the callback after twitter has authorized the user
+        // handle the callback after twitter has authorized the account
         app.get('/connect/twitter/callback',
             passport.authorize('twitter', {
                 successRedirect : '/profile',
@@ -141,7 +141,7 @@ const request = require ('request');
         // send to reddit to do the authentication
         app.get('/connect/reddit', passport.authorize('reddit'));
 
-        // the callback after reedit has authorized the user
+        // the callback after reedit has authorized the account
         app.get('/connect/reddit/callback',
             passport.authorize('reddit', {
                 successRedirect : '/profile',
@@ -151,63 +151,48 @@ const request = require ('request');
 // =============================================================================
 // UNLINK ACCOUNTS =============================================================
 // =============================================================================
-// used to unlink accounts. for social accounts, just remove the token
+// used to unlink account. for social account, just remove the token
 // for local account, remove email and password
-// user account will stay active in case they want to reconnect in the future
+// account account will stay active in case they want to reconnect in the future
 
     // local -----------------------------------
     app.get('/unlink/local', isLoggedIn, function(req, res) {
-        var user            = req.user;
-        user.local.email    = undefined;
-        user.local.password = undefined;
-        user.save(function(err) {
+        var account            = req.account;
+        account.local.email    = undefined;
+        account.local.password = undefined;
+        account.save(function(err) {
             res.redirect('/profile');
         });
     });
 
     // twitch -------------------------------
     app.get('/unlink/twitch', isLoggedIn, function(req, res) {
-        var user            = req.user;
-        user.twitch.token = undefined;
-        user.save(function(err) {
+        var account            = req.account;
+        account.twitch.token = undefined;
+        account.save(function(err) {
             res.redirect('/profile');
         });
     });
 
     // twitter --------------------------------
     app.get('/unlink/twitter', isLoggedIn, function(req, res) {
-        var user           = req.user;
-        user.twitter.token = undefined;
-        user.save(function(err) {
+        var account           = req.account;
+        account.twitter.token = undefined;
+        account.save(function(err) {
             res.redirect('/profile');
         });
     });
 
     // reddit ---------------------------------
     app.get('/unlink/reddit', isLoggedIn, function(req, res) {
-        var user          = req.user;
-        user.reddit.token = undefined;
-        user.save(function(err) {
+        var account          = req.account;
+        account.reddit.token = undefined;
+        account.save(function(err) {
             res.redirect('/profile');
         });
     });
-
-
-
-
-// =============================================================================
-// TEST ENDPOINTS =============================================================
-// =============================================================================
-    app.get('/get/twitchEndpoint', function(req, res, next){
-        request('https://api.twitch.tv/kraken/users/216121657/follows/channels', function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                var info = JSON.parse(body)
-                res.redirect('/profile');
-            }
-        })
-    });
 };
-// route middleware to ensure user is logged in
+// route middleware to ensure account is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
         return next();
