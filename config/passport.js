@@ -5,7 +5,7 @@ var TwitterStrategy  = require('passport-twitter').Strategy;
 var RedditStrategy   = require('passport-reddit').Strategy;
 
 // load up the account model
-var Account       = require('../models/account');
+var User       = require('../models/account');
 
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
@@ -16,85 +16,194 @@ module.exports = function(passport) {
     // passport session setup ==================================================
     // =========================================================================
     // required for persistent login sessions
-    // passport needs ability to serialize and unserialize accounts out of session
+    // passport needs ability to serialize and unserialize users out of session
 
-    // used to serialize the account for the session
-    passport.serializeUser(function(account, done) {
-        done(null, account.id);
+    // used to serialize the user for the session
+    passport.serializeUser(function(user, done) {
+        done(null, user.id);
     });
 
-    // used to deserialize the account
+    // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-        Account.findById(id, function(err, account) {
-            done(err, account);
+        User.findById(id, function(err, user) {
+            done(err, user);
         });
     });
+
+    // =========================================================================
+    // LOCAL LOGIN =============================================================
+    // =========================================================================
+    passport.use('local-login', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+    },
+    function(req, email, password, done) {
+        if (email)
+            email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
+
+        // asynchronous
+        process.nextTick(function() {
+            User.findOne({ 'local.email' :  email }, function(err, user) {
+                // if there are any errors, return the error
+                if (err)
+                    return done(err);
+
+                // if no user is found, return the message
+                if (!user)
+                    return done(null, false, req.flash('loginMessage', 'No user found.'));
+
+                if (!user.validPassword(password))
+                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+
+                // all is well, return user
+                else
+                    return done(null, user);
+            });
+        });
+
+    }));
+
+    // =========================================================================
+    // LOCAL SIGNUP ============================================================
+    // =========================================================================
+    passport.use('local-signup', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+    },
+    function(req, email, password, done) {
+        if (email)
+            email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
+
+        // asynchronous
+        process.nextTick(function() {
+            // if the user is not already logged in:
+            if (!req.user) {
+                User.findOne({ 'local.email' :  email }, function(err, user) {
+                    // if there are any errors, return the error
+                    if (err)
+                        return done(err);
+
+                    // check to see if theres already a user with that email
+                    if (user) {
+                        return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+                    } else {
+
+                        // create the user
+                        var newUser            = new User();
+
+                        newUser.local.email    = email;
+                        newUser.local.password = newUser.generateHash(password);
+
+                        newUser.save(function(err) {
+                            if (err)
+                                return done(err);
+
+                            return done(null, newUser);
+                        });
+                    }
+
+                });
+            // if the user is logged in but has no local account...
+            } else if ( !req.user.local.email ) {
+                // ...presumably they're trying to connect a local account
+                // BUT let's check if the email used to connect a local account is being used by another user
+                User.findOne({ 'local.email' :  email }, function(err, user) {
+                    if (err)
+                        return done(err);
+                    
+                    if (user) {
+                        return done(null, false, req.flash('loginMessage', 'That email is already taken.'));
+                        // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
+                    } else {
+                        var user = req.user;
+                        user.local.email = email;
+                        user.local.password = user.generateHash(password);
+                        user.save(function (err) {
+                            if (err)
+                                return done(err);
+                            
+                            return done(null,user);
+                        });
+                    }
+                });
+            } else {
+                // user is logged in and already has a local account. Ignore signup. (You should log out before trying to create a new account, user!)
+                return done(null, req.user);
+            }
+
+        });
+
+    }));
+
     // =========================================================================
     // Twitch ================================================================
     // =========================================================================
     var thStrategy = configAuth.twitchAuth;
-    thStrategy.passReqToCallback = true;  // allows us to pass in the req from our route (lets us check if a account is logged in or not)
+    thStrategy.passReqToCallback = true;  // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     passport.use(new TwitchStrategy(thStrategy,
     function(req, token, refreshToken, profile, done) {
 
         // asynchronous
         process.nextTick(function() {
             console.log("=============twitch==============",profile);
-            console.log(token, refreshToken);
-            // check if the account is already logged in
-            if (!req.account) {
+            // check if the user is already logged in
+            if (!req.user) {
 
-                Account.findOne({ 'twitch.id' : profile.id }, function(err, account) {
+                User.findOne({ 'twitch.id' : profile.id }, function(err, user) {
                     if (err)
                         return done(err);
 
-                    if (account) {
+                    if (user) {
 
-                        // if there is a account id already but no token (account was linked at one point and then removed)
-                        if (!account.twitch.token) {
-                            account.twitch.token = token;
+                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        if (!user.twitch.token) {
+                            user.twitch.token = token;
                         
-                            account.save(function(err) {
+                            user.save(function(err) {
                                 if (err)
                                     return done(err);
                                     
-                                return done(null, account);
+                                return done(null, user);
                             });
                         }
 
-                        return done(null, account); // account found, return that account
+                        return done(null, user); // user found, return that user
                     } else {
-                        // if there is no account, create them
-                        var newAccount            = new Account();
+                        // if there is no user, create them
+                        var newUser            = new User();
 
-                        newAccount.twitch.id    = profile.id;
-                        newAccount.twitch.token = token;
-                        newAccount.twitch.username  = profile.username;
-                        newAccount.twitch.email = profile.email;
-                        newAccount.twitch.logo = profile._json.logo;
-                        newAccount.save(function(err) {
+                        newUser.twitch.id    = profile.id;
+                        newUser.twitch.token = token;
+                        newUser.twitch.username  = profile.username;
+                        newUser.twitch.email = profile.email;
+                        newUser.twitch.logo = profile._json.logo;
+                        newUser.save(function(err) {
                             if (err)
                                 return done(err);
                                 
-                            return done(null, newAccount);
+                            return done(null, newUser);
                         });
                     }
                 });
 
             } else {
-                // account already exists and is logged in, we have to link accounts
-                var account            = req.account; // pull the account out of the session
+                // user already exists and is logged in, we have to link accounts
+                var user            = req.user; // pull the user out of the session
 
-                account.twitch.id    = profile.id;
-                account.twitch.token = token;
-                account.twitch.username = profile.username;
-                account.twitch.email = profile.email;
-                account.twitch.logo = profile._json.logo;
-                account.save(function(err) {
+                user.twitch.id    = profile.id;
+                user.twitch.token = token;
+                user.twitch.username = profile.username;
+                user.twitch.email = profile.email;
+                user.twitch.logo = profile._json.logo;
+                user.save(function(err) {
                     if (err)
                         return done(err);
                         
-                    return done(null, account);
+                    return done(null, user);
                 });
 
             }
@@ -110,7 +219,7 @@ module.exports = function(passport) {
         consumerKey     : configAuth.twitterAuth.consumerKey,
         consumerSecret  : configAuth.twitterAuth.consumerSecret,
         callbackURL     : configAuth.twitterAuth.callbackURL,
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a account is logged in or not)
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     },
     function(req, token, tokenSecret, profile, done) {
@@ -118,65 +227,64 @@ module.exports = function(passport) {
         // asynchronous
         process.nextTick(function() {
             console.log("=============twitter==============",profile);
-            console.log(token, tokenSecret);
-            // check if the account is already logged in
-            if (!req.account) {
+            // check if the user is already logged in
+            if (!req.user) {
 
-                Account.findOne({ 'twitter.id' : profile.id }, function(err, account) {
+                User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
                     if (err)
                         return done(err);
 
-                    if (account) {
-                        // if there is a account id already but no token (account was linked at one point and then removed)
-                        if (!account.twitter.token) {
-                            account.twitter.token       = token;
-                            account.twitter.username    = profile.username;
-                            account.twitter.displayName = profile.displayName;
-                            account.twitter.logo        = profile.photos[0].value;
+                    if (user) {
+                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        if (!user.twitter.token) {
+                            user.twitter.token       = token;
+                            user.twitter.username    = profile.username;
+                            user.twitter.displayName = profile.displayName;
+                            user.twitter.logo        = profile.photos[0].value;
 
-                            account.save(function(err) {
+                            user.save(function(err) {
                                 if (err)
                                     return done(err);
                                     
-                                return done(null, account);
+                                return done(null, user);
                             });
                         }
 
-                        return done(null, account); // account found, return that account
+                        return done(null, user); // user found, return that user
                     } else {
-                        // if there is no account, create them
-                        var newAccount                 = new Account();
+                        // if there is no user, create them
+                        var newUser                 = new User();
 
-                        newAccount.twitter.id          = profile.id;
-                        newAccount.twitter.token       = token;
-                        newAccount.twitter.username    = profile.username;
-                        newAccount.twitter.displayName = profile.displayName;
-                        newAccount.twitter.logo        = profile.photos[0].value;    
+                        newUser.twitter.id          = profile.id;
+                        newUser.twitter.token       = token;
+                        newUser.twitter.username    = profile.username;
+                        newUser.twitter.displayName = profile.displayName;
+                        newUser.twitter.logo        = profile.photos[0].value;    
 
-                        newAccount.save(function(err) {
+                        newUser.save(function(err) {
                             if (err)
                                 return done(err);
                                 
-                            return done(null, newAccount);
+                            return done(null, newUser);
                         });
                     }
                 });
 
             } else {
-                // account already exists and is logged in, we have to link accounts
-                var account                 = req.account; // pull the account out of the session
+                // user already exists and is logged in, we have to link accounts
+                var user                 = req.user; // pull the user out of the session
 
-                account.twitter.id          = profile.id;
-                account.twitter.token       = token;
-                account.twitter.username    = profile.username;
-                account.twitter.displayName = profile.displayName;
-                account.twitter.logo        = profile.photos[0].value;
+                user.twitter.id          = profile.id;
+                user.twitter.token       = token;
+                user.twitter.username    = profile.username;
+                user.twitter.displayName = profile.displayName;
+                user.twitter.logo        = profile.photos[0].value;
 
-                account.save(function(err) {
+                user.save(function(err) {
                     if (err)
                         return done(err);
                         
-                    return done(null, account);
+                    return done(null, user);
                 });
             }
 
@@ -192,72 +300,71 @@ module.exports = function(passport) {
         clientID        : configAuth.redditAuth.clientID,
         clientSecret    : configAuth.redditAuth.clientSecret,
         callbackURL     : configAuth.redditAuth.callbackURL,
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a account is logged in or not)
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     },
     function(req, token, refreshToken, profile, done) {
         console.log("=============reddit==============",profile);
-        console.log(token, refreshToken);
         // asynchronous
         process.nextTick(function() {
 
-            // check if the account is already logged in
-            if (!req.account) {
+            // check if the user is already logged in
+            if (!req.user) {
 
-                Account.findOne({ 'reddit.id' : profile.id }, function(err, account) {
+                User.findOne({ 'reddit.id' : profile.id }, function(err, user) {
                     if (err)
                         return done(err);
 
-                    if (account) {
+                    if (user) {
 
-                        // if there is a account id already but no token (account was linked at one point and then removed)
-                        if (!account.reddit.token) {
-                            account.reddit.id = profile.id;
-                            account.reddit.token = token;
-                            account.reddit.name  = profile.name;
-                            account.reddit.logo  = profile._json.icon_img;
+                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        if (!user.reddit.token) {
+                            user.reddit.id = profile.id;
+                            user.reddit.token = token;
+                            user.reddit.name  = profile.name;
+                            user.reddit.logo  = profile._json.icon_img;
 
 
-                            account.save(function(err) {
+                            user.save(function(err) {
                                 if (err)
                                     return done(err);
                                     
-                                return done(null, account);
+                                return done(null, user);
                             });
                         }
 
-                        return done(null, account);
+                        return done(null, user);
                     } else {
-                        var newAccount          = new Account();
+                        var newUser          = new User();
 
-                        newAccount.reddit.id    = profile.id;
-                        newAccount.reddit.token = token;
-                        newAccount.reddit.name  = profile.name;
-                        newAccount.reddit.logo  = profile._json.icon_img;
+                        newUser.reddit.id    = profile.id;
+                        newUser.reddit.token = token;
+                        newUser.reddit.name  = profile.name;
+                        newUser.reddit.logo  = profile._json.icon_img;
 
-                        newAccount.save(function(err) {
+                        newUser.save(function(err) {
                             if (err)
                                 return done(err);
                                 
-                            return done(null, newAccount);
+                            return done(null, newUser);
                         });
                     }
                 });
 
             } else {
-                // account already exists and is logged in, we have to link accounts
-                var account               = req.account; // pull the account out of the session
+                // user already exists and is logged in, we have to link accounts
+                var user               = req.user; // pull the user out of the session
 
-                account.reddit.id    = profile.id;
-                account.reddit.token = token;
-                account.reddit.name  = profile.name;
-                account.reddit.logo  = profile._json.icon_img;
+                user.reddit.id    = profile.id;
+                user.reddit.token = token;
+                user.reddit.name  = profile.name;
+                user.reddit.logo  = profile._json.icon_img;
 
-                account.save(function(err) {
+                user.save(function(err) {
                     if (err)
                         return done(err);
                         
-                    return done(null, account);
+                    return done(null, user);
                 });
 
             }

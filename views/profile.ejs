@@ -21,7 +21,19 @@
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-account"></span> Local</h3>
+                <h3><span class="fa fa-user"></span> Local</h3>
+
+                <% if (user.local.email) { %>
+                    <p>
+                        <strong>id</strong>: <%= user._id %><br>
+                        <strong>email</strong>: <%= user.local.email %><br>
+                        <strong>password</strong>: <%= user.local.password %>
+                    </p>
+                    
+                    <a href="/unlink/local" class="btn btn-default">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                <% } %>
 
             </div>
         </div>
@@ -31,14 +43,14 @@
             <div class="well">
                 <h3 class="text-info"><span class="fab fa-twitch"></span> twitch</h3>
 
-                <!-- check if the account has this token (is the account authenticated with this social account) -->
-                <% if (account.twitch.token) { %>
+                <!-- check if the user has this token (is the user authenticated with this social account) -->
+                <% if (user.twitch.token) { %>
                     <p>
-                        <strong>id</strong>: <%= account.twitch.id %><br>
-                        <strong>token</strong>: <%= account.twitch.token %><br>
-                        <strong>email</strong>: <%= account.twitch.email %><br>
-                        <strong>accountname</strong>: <%= account.twitch.username %>
-                        <img height=48 width=48 src= <%= account.twitch.logo %> <br>
+                        <strong>id</strong>: <%= user.twitch.id %><br>
+                        <strong>token</strong>: <%= user.twitch.token %><br>
+                        <strong>email</strong>: <%= user.twitch.email %><br>
+                        <strong>username</strong>: <%= user.twitch.username %>
+                        <img height=48 width=48 src= <%= user.twitch.logo %> <br>
                         
                     </p>
 
@@ -58,13 +70,13 @@
             <div class="well">
                 <h3 class="text-info"><span class="fab fa-twitter"></span> Twitter</h3>
 
-                <% if (account.twitter.token) { %>
+                <% if (user.twitter.token) { %>
                     <p>
-                        <strong>id</strong>: <%= account.twitter.id %><br>
-                        <strong>token</strong>: <%= account.twitter.token %><br>
-                        <strong>display name</strong>: <%= account.twitter.displayName %><br>
-                        <strong>accountname</strong>: <%= account.twitter.username %>
-                        <img src= <%= account.twitter.logo %> <br>
+                        <strong>id</strong>: <%= user.twitter.id %><br>
+                        <strong>token</strong>: <%= user.twitter.token %><br>
+                        <strong>display name</strong>: <%= user.twitter.displayName %><br>
+                        <strong>username</strong>: <%= user.twitter.username %>
+                        <img src= <%= user.twitter.logo %> <br>
                         
                     </p>
 
@@ -81,12 +93,12 @@
             <div class="well">
                 <h3 class="text-danger"><span class="fab fa-reddit"></span> Reddit</h3>
 
-                <% if (account.reddit.token) { %>
+                <% if (user.reddit.token) { %>
                     <p>
-                        <strong>id</strong>: <%= account.reddit.id %><br>
-                        <strong>token</strong>: <%= account.reddit.token %><br>
-                        <strong>username</strong>: <%= account.reddit.name %>
-                        <img height=48 width=48 src= <%= account.reddit.logo %> <br>
+                        <strong>id</strong>: <%= user.reddit.id %><br>
+                        <strong>token</strong>: <%= user.reddit.token %><br>
+                        <strong>username</strong>: <%= user.reddit.name %>
+                        <img height=48 width=48 src= <%= user.reddit.logo %> <br>
                     </p>
 
                     <a href="/unlink/reddit" class="btn btn-danger">Unlink</a>
@@ -101,3 +113,4 @@
 </div>
 </body>
 </html>
+

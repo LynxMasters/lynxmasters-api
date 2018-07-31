@@ -1,13 +1,11 @@
 // load the things we need
 var mongoose = require('mongoose');
 
-
-// define the schema for our user model
-var accountSchema = mongoose.Schema({
+var userSchema = mongoose.Schema({
 
     local            : {
-        id           : String,
-        username     : String  
+        id        : String,
+        email     : String
     },
     twitch         : {
         id           : String,
@@ -34,5 +32,6 @@ var accountSchema = mongoose.Schema({
 
 });
 
-// create the model for account and expose it to our app
-module.exports = mongoose.model('Account', accountSchema, 'account');
+
+// create the model for users and expose it to our app
+module.exports = mongoose.model('User', userSchema, 'account');
