@@ -13,6 +13,7 @@ require('dotenv').config()
 app.use(logger('combined'))
 app.use(bodyParser.json())
 app.use(cors())
+app.set('view engine', 'ejs');
 
 
 const mongoose = require('mongoose')
