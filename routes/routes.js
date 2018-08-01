@@ -191,21 +191,7 @@ const request = require ('request');
             res.redirect('/profile');
         });
     });
-
-
-
-
-// =============================================================================
-// TEST ENDPOINTS =============================================================
-// =============================================================================
-    app.get('/get/twitchEndpoint', function(req, res, next){
-        request('https://api.twitch.tv/kraken/users/216121657/follows/channels', function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                var info = JSON.parse(body)
-                res.redirect('/profile');
-            }
-        })
-    });
+    
 };
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {

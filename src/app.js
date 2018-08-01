@@ -25,20 +25,9 @@ db.on("error", console.error.bind(console, "connection error"))
 db.once("open", function(callback){
   console.log("Connection Succeeded")
 })
+// Sessions
 
-// app.set('trust proxy', 1) // trust first proxy
-// // track login sessions
-// app.use(session({
-//   secret: 'doin thangs',  // for development only
-//   resave: false,
-//   saveUninitialized: true,
-//   cookie: {
-//     httpOnly: true,
-//     maxAge: 30 * 24 * 60 * 60 * 1000,  // 1 month cookie
-//     secure: false // true requires an https-enabled website
-//   },
-//   store: new mongoStore({mongooseConnection: db})
-// }))
+app.use(session({ secret: 'this-is-a-secret-token', cookie: { maxAge: 60000 }}));
 
 // config cookie parser middleware
 app.use(cookieParser())
