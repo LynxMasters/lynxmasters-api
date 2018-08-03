@@ -8,7 +8,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 const sgMail = require('@sendgrid/mail')
 const request = require ('request');
 require('dotenv').config({path:'./config/sendgrid.env'})
-
+let jwt = require('jsonwebtoken');
 
 
 const schema = {
@@ -145,7 +145,6 @@ function addUser(request) {
   })
 }
 
-
 function loginUser(req) {
   return new Promise((resolve, reject) => {
     Users.
@@ -165,9 +164,6 @@ function loginUser(req) {
               err.status = 401
               reject(err)
             } else {
-              //req.session = user;
-              //console.log(req.session);
-              // return clean user object
               let cleanUser = user.toObject()
               delete cleanUser.password
               delete cleanUser.__v
@@ -271,3 +267,4 @@ module.exports = {
   loginUser,
   userVerificationCheck
 }
+

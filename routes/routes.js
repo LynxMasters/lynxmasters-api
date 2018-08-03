@@ -53,7 +53,7 @@ const request = require ('request');
 
     // twitch -------------------------------
 
-        // send to facebook to do the authentication
+        // send to twitch to do the authentication
         app.get('/auth/twitch', passport.authenticate('twitch', 
             { scope :
              ['user_read'] 

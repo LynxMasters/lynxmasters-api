@@ -2,7 +2,9 @@ let Users = require("../models/users")
 let multer  = require('multer')
 let path = '/api/v1';
 
-module.exports = (app) => {
+
+
+module.exports = (app, passport) => {
   // Add new user
   app.post(`${path}/users`, (req, res) => {
     Users.addUser(req.body).then(
@@ -16,7 +18,6 @@ module.exports = (app) => {
       return error
     })
   })
-
 
   // Fetch single user for testing API/Server works
   app.get(`${path}/users`, (req, res) => {
@@ -46,7 +47,7 @@ module.exports = (app) => {
     Users.loginUser(req.body).then(
       (user) => {
         
-        res.send(req.session)
+        res.send({ user});
       },
       (err) => {
         res.send(err)

@@ -30,6 +30,38 @@ module.exports = function(passport) {
         });
     });
 
+     passport.use('local-login', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with email
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+    },
+    function(req, email, password, done) {
+        if (email)
+            email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
+
+        // asynchronous
+        process.nextTick(function() {
+            User.findOne({ 'local.email' :  email }, function(err, user) {
+                // if there are any errors, return the error
+                if (err)
+                    return done(err);
+
+                // if no user is found, return the message
+                if (!user)
+                    return done(null, false, req.flash('loginMessage', 'No user found.'));
+
+                if (!user.validPassword(password))
+                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+
+                // all is well, return user
+                else
+                    return done(null, user);
+            });
+        });
+
+    }));
+
     // =========================================================================
     // Twitch ================================================================
     // =========================================================================
@@ -42,7 +74,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
             console.log("=============twitch==============",profile);
             // check if the user is already logged in
-            if (!req.session) {
+            if (!req.user) {
 
                 User.findOne({ 'twitch.id' : profile.id }, function(err, user) {
                     if (err)
@@ -83,19 +115,20 @@ module.exports = function(passport) {
 
             } else {
                 // user already exists and is logged in, we have to link accounts
-                var user            = new User // pull the user out of the session
-                console.log(req.session);
+                var newUser            = new User(); // pull the user out of the session
+                console.log(req.session.user);
                 
-                user.twitch.id    = profile.id;
-                user.twitch.token = token;
-                user.twitch.username = profile.username;
-                user.twitch.email = profile.email;
-                user.twitch.logo = profile._json.logo;
-                user.save(function(err) {
+                newUser.local.id = req.session.user
+                newUser.twitch.id    = profile.id;
+                newUser.twitch.token = token;
+                newUser.twitch.username = profile.username;
+                newUser.twitch.email = profile.email;
+                newUser.twitch.logo = profile._json.logo;
+                newUser.save(function(err) {
                     if (err)
                         return done(err);
                         
-                    return done(null, user);
+                    return done(null, newUser);
                 });
 
             }
@@ -120,7 +153,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
             console.log("=============twitter==============",profile);
             // check if the user is already logged in
-            if (!req.session.user) {
+            if (!req.user) {
 
                 User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
                     if (err)
@@ -202,7 +235,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
 
             // check if the user is already logged in
-            if (!req.session.user) {
+            if (!req.user) {
 
                 User.findOne({ 'reddit.id' : profile.id }, function(err, user) {
                     if (err)
