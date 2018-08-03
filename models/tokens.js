@@ -103,9 +103,9 @@ module.exports = {
           return(err, null)
         }
     });
-  }
+  },
 
-  twitterAcs: function(verify) {
+  twitterAcs: function(tkn,verify) {
 
     const oauth = OAuth({
       consumer: {
@@ -117,30 +117,35 @@ module.exports = {
         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
       }
     });
+   
+    const token = {
+      key: tkn,
+      secret: ''
+    };
 
     const request_data = {
       url: 'https://api.twitter.com/oauth/access_token',
       method: 'POST',
-      data: 'oauth_verifier='+verify 
+      data: 'oauth_verifier='+verify
     };
 
     request({
       
       url: request_data.url,
       method: request_data.method,
-      form: request_data
+      form: oauth.authorize(request_data, token)
     
     }, function(err, res, body) {
-        
+        console.log(body)
         tknData = qs.parse(body);
         result = tknData.oauth_token;
         
         if(!err){
           console.log(result);
-          return tkn(null, result);
+          return (result);
         }
         else{
-          return(err, null)
+          return(err)
         }
     });
   }

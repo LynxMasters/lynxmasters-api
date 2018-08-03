@@ -30,7 +30,7 @@ const configAuth = require('../config/auth');
 	app.get('/auth/twitch/callback', function(req, res){
 		//if (req.query.state == req.session.state){
     		if(req.query.code){
-          if(Tokens.twitchReq(req.query.code)){
+          if(Tokens.twitch(req.query.code)){
     			   res.redirect('http://localhost:8080/LinkAccounts')
           }
     		}		
@@ -39,7 +39,7 @@ const configAuth = require('../config/auth');
 
 	app.get('/auth/twitter', function(req, res){
 		//if(req.user._id){
-			 Tokens.twitterReqToken(function(err, data){
+			 Tokens.twitterReq(function(err, data){
             console.log(data);
             res.redirect('https://api.twitter.com/oauth/authenticate?force_login=true&oauth_token='+data)
           },
@@ -50,8 +50,9 @@ const configAuth = require('../config/auth');
 	});
 	app.get('/auth/twitter/callback', function(req, res){
 
-      console.log(res.query);
-      Tokens.twitterAcs(verify);
+      console.log(req.query.oauth_verifier);
+
+      Tokens.twitterAcs(req.query.oauth_verifier);
 
 	});   
 }
