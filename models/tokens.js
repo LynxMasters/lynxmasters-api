@@ -1,0 +1,147 @@
+const request = require ('request');
+const crypto = require('crypto');
+const OAuth = require('oauth-1.0a');
+const qs = require('qs');
+
+module.exports = {
+
+	reddit: function(code, err) {
+    	
+    	let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback'
+    	request({
+    		headers: {
+      			'Accept': 'application/x-www-form-urlencoded',
+      			'Content-Type': 'application/x-www-form-urlencoded',
+      			'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R'//base64 encoded client_id:client_secret 
+    		},
+    		uri: 'https://www.reddit.com/api/v1/access_token',
+    		body: data,
+    		method: 'POST'
+  			}, function (err, res, body) {
+  				let tknData = JSON.parse(body)
+  				console.log(tknData.access_token)
+  				if(tknData.access_token){
+  					
+  				}
+  				else{
+  					return(err);
+  				}
+  		});
+    	if(err){
+    		return false;
+    	}
+    	return true;
+	},
+
+	twitch: function(code, err) {
+
+    	let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code='+code+'&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'	
+    	request({
+    		headers: {
+      			'Accept': 'application/x-www-form-urlencoded',
+      			'Content-Type': 'application/x-www-form-urlencoded' 
+    		},
+    		uri: 'https://id.twitch.tv/oauth2/token',
+    		body: data,
+    		method: 'POST'
+  			}, function (err, res, body) {
+  				let tknData = JSON.parse(body)
+  				console.log(tknData)
+  				if(tknData.access_token){
+  					
+  				}
+  				else{
+  					return(err)
+  				}
+  			});
+    	if(err){
+    		return false;
+    	}
+    	return true;
+	},
+	
+
+	twitterReq: function(tkn) {	
+    const oauth = OAuth({
+      consumer: {
+        key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
+        secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+      },
+      signature_method: 'HMAC-SHA1',
+      hash_function(base_string, key) {
+        return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+      }
+    });
+ 
+    const request_data = {
+      url: 'https://api.twitter.com/oauth/request_token',
+      method: 'POST',
+      data: '' 
+    };
+ 
+    const token = {
+      key: '',
+      secret: ''
+    };
+ 
+    request({
+      
+      url: request_data.url,
+      method: request_data.method,
+      form: oauth.authorize(request_data)
+    
+    }, function(err, res, body) {
+        
+        tknData = qs.parse(body);
+        result = tknData.oauth_token;
+        
+        if(!err){
+          console.log(result);
+          return tkn(null, result);
+        }
+        else{
+          return(err, null)
+        }
+    });
+  }
+
+  twitterAcs: function(verify) {
+
+    const oauth = OAuth({
+      consumer: {
+        key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
+        secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+      },
+      signature_method: 'HMAC-SHA1',
+      hash_function(base_string, key) {
+        return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+      }
+    });
+
+    const request_data = {
+      url: 'https://api.twitter.com/oauth/access_token',
+      method: 'POST',
+      data: 'oauth_verifier='+verify 
+    };
+
+    request({
+      
+      url: request_data.url,
+      method: request_data.method,
+      form: request_data
+    
+    }, function(err, res, body) {
+        
+        tknData = qs.parse(body);
+        result = tknData.oauth_token;
+        
+        if(!err){
+          console.log(result);
+          return tkn(null, result);
+        }
+        else{
+          return(err, null)
+        }
+    });
+  }
+}

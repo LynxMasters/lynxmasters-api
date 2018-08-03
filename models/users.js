@@ -8,7 +8,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 const sgMail = require('@sendgrid/mail')
 const request = require ('request');
 require('dotenv').config({path:'./config/sendgrid.env'})
-let jwt = require('jsonwebtoken');
+
 
 
 const schema = {
