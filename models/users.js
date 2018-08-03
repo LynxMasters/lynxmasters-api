@@ -6,7 +6,9 @@ const UIDGenerator = require('uid-generator')
 const _ = require('lodash')
 const uniqueValidator = require('mongoose-unique-validator')
 const sgMail = require('@sendgrid/mail')
+const request = require ('request');
 require('dotenv').config({path:'./config/sendgrid.env'})
+let jwt = require('jsonwebtoken');
 
 
 const schema = {
@@ -147,11 +149,10 @@ function addUser(request) {
   })
 }
 
-
-function loginUser(request) {
+function loginUser(req) {
   return new Promise((resolve, reject) => {
     Users.
-      findOne({ email: request.email})
+      findOne({ email: req.email})
       .where('active').equals(true)
       .exec(function (error, user) {
         if (error) {
@@ -161,13 +162,12 @@ function loginUser(request) {
           err.status = 400
           reject(err)
         } else {
-          bcrypt.compare(request.password, user.password, function (error, isMatch) {
+          bcrypt.compare(req.password, user.password, function (error, isMatch) {
             if (!isMatch) {
               let err = new Error('Wrong email or password.')
               err.status = 401
               reject(err)
             } else {
-              // return clean user object
               let cleanUser = user.toObject()
               delete cleanUser.password
               delete cleanUser.__v
@@ -271,3 +271,4 @@ module.exports = {
   loginUser,
   userVerificationCheck
 }
+
