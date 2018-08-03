@@ -1,4 +1,4 @@
-const dbfactory = require('./database.js')
+const dbfactory = require('../config/database.js')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const moment = require('moment')
