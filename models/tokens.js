@@ -120,13 +120,13 @@ module.exports = {
    
     const token = {
       key: tkn,
-      secret: ''
+      secret: '' 
     };
 
     const request_data = {
       url: 'https://api.twitter.com/oauth/access_token',
       method: 'POST',
-      data: 'oauth_verifier='+verify
+      data: { oauth_verifier: verify }
     };
 
     request({
