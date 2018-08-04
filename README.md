@@ -135,4 +135,7 @@ SUBJECT='Custome subject....'
 5. Sendgrid will now work
 
 ## Contributors
-....
+
+|  [![Nick Monty](https://i.imgur.com/zzcGOku.png?1)](https://github.com/nmonty9) | [![ianarsenault](https://avatars2.githubusercontent.com/u/12011826?s=80&v=4&s=40)](https://github.com/ianarsenault)  | [![Tyler Corwin](https://avatars1.githubusercontent.com/u/22626343?s=80&v=4)](https://github.com/tylerdcorwin) | [![j-arsenault](https://avatars0.githubusercontent.com/u/11837811?s=80&v=4)](https://github.com/j-arsenault)   |
+| :--:|:--:|:--: | :--: |
+|  [Nick Montalbano](https://github.com/nmonty9) | [Ian Arsenault](https://github.com/ianarsenault)  | [Tyler Corwin](https://github.com/tylerdcorwin) | [Jameson Arsenault](https://github.com/j-arsenault) |
