@@ -22,5 +22,9 @@ module.exports = {
         'consumerSecret'     : 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g',
         'callbackURL'        : 'http://localhost:8081/auth/twitter/callback'
     },
+    'jwt'     :{
+        'secret'             : 'thisisasecretjwt'
 
+
+    }
 };

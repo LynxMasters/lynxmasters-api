@@ -47,7 +47,7 @@ module.exports = (app, passport) => {
     Users.loginUser(req.body).then(
       (user) => {
         
-        res.send({ user});
+        res.send(user);
       },
       (err) => {
         res.send(err)

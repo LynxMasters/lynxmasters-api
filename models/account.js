@@ -1,31 +1,31 @@
 // load the things we need
 var mongoose = require('mongoose');
 
-var userSchema = mongoose.Schema({
+var accountSchema = mongoose.Schema({
     local            : {
-        email        :String
     }, 
     
     twitch         : {
 
         id           : String,
-        token        : String,
-        username     : String,
-        email        : String,
-        logo         : String        
+        access_token        : String,
+        refresh_token       : String,   
+        username            : String,
+        logo                : String        
         
     },
     twitter          : {
         id           : String,
-        token        : String,
+        ouath_token  : String,
+        ouath_secret : String,
         displayName  : String,
-        username     : String,
         logo         : String,
           
     },
     reddit           : {
         id           : String,
-        token        : String,
+        access,token : String,
+        refresh_token: String,
         name         : String,
         logo         : String,
     }
@@ -33,4 +33,4 @@ var userSchema = mongoose.Schema({
 });
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('User', userSchema, 'account');
+module.exports = mongoose.model('Accounts', accountSchema);
