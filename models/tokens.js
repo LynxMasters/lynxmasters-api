@@ -7,57 +7,62 @@ module.exports = {
 
 	reddit: function(code, err) {
     	
-    	let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback'
-    	request({
-    		headers: {
-      			'Accept': 'application/x-www-form-urlencoded',
-      			'Content-Type': 'application/x-www-form-urlencoded',
-      			'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R'//base64 encoded client_id:client_secret 
-    		},
-    		uri: 'https://www.reddit.com/api/v1/access_token',
-    		body: data,
-    		method: 'POST'
-  			}, function (err, res, body) {
-  				let tknData = JSON.parse(body)
-  				console.log(tknData.access_token)
-  				if(tknData.access_token){
-  					
-  				}
-  				else{
-  					return(err);
-  				}
-  		});
-    	if(err){
-    		return false;
-    	}
-    	return true;
+    let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback'
+    request({
+    	
+      headers: {
+      	'Accept': 'application/x-www-form-urlencoded',
+      	'Content-Type': 'application/x-www-form-urlencoded',
+      	'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R'//base64 encoded client_id:client_secret 
+    	},
+    	
+      uri: 'https://www.reddit.com/api/v1/access_token',
+    	body: data,
+    	method: 'POST'
+  	
+    }, function (err, res, body) {
+  		
+      let tknData = JSON.parse(body)
+      console.log('-----------Reddit access_token---------------')
+  		console.log(tknData)
+  		
+      if(tknData.access_token){
+  			return(tknData)
+  		}
+  		else{
+
+  			return(err);
+  		}
+  	});
 	},
 
 	twitch: function(code, err) {
 
-    	let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code='+code+'&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'	
-    	request({
-    		headers: {
-      			'Accept': 'application/x-www-form-urlencoded',
-      			'Content-Type': 'application/x-www-form-urlencoded' 
-    		},
-    		uri: 'https://id.twitch.tv/oauth2/token',
-    		body: data,
-    		method: 'POST'
-  			}, function (err, res, body) {
-  				let tknData = JSON.parse(body)
-  				console.log(tknData)
-  				if(tknData.access_token){
-  					
-  				}
-  				else{
-  					return(err)
-  				}
-  			});
-    	if(err){
-    		return false;
-    	}
-    	return true;
+    let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code='+code+'&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'	
+    request({
+    	
+      headers: {
+      	'Accept': 'application/x-www-form-urlencoded',
+      	'Content-Type': 'application/x-www-form-urlencoded' 
+    	},
+      
+      uri: 'https://id.twitch.tv/oauth2/token',
+      body: data,
+      method: 'POST'
+  	
+    }, function (err, res, body) {
+  		
+      let tknData = JSON.parse(body)
+      console.log('-----------Twitch access_token---------------')
+  		console.log(tknData)
+  		
+      if(tknData.access_token){
+  			return(tknData)
+  		}
+  		else{
+  			return(err)
+  		}
+  	});
 	},
 	
 
@@ -92,16 +97,16 @@ module.exports = {
     
     }, function(err, res, body) {
         
-        tknData = qs.parse(body);
-        result = tknData.oauth_token;
+      tknData = qs.parse(body);
+      result = tknData.oauth_token;
         
-        if(!err){
-          console.log(result);
-          return tkn(null, result);
-        }
-        else{
-          return(err, null)
-        }
+      if(!err){
+        console.log(result);
+        return tkn(null, result);
+      }
+      else{
+        return(err, null)
+      }
     });
   },
 
@@ -136,17 +141,16 @@ module.exports = {
       form: oauth.authorize(request_data, token)
     
     }, function(err, res, body) {
-        console.log(body)
-        tknData = qs.parse(body);
-        result = tknData.oauth_token;
         
-        if(!err){
-          console.log(result);
-          return (result);
-        }
-        else{
-          return(err)
-        }
+      tknData = qs.parse(body);
+      console.log('-----------Twitter access_token---------------');
+      console.log(tknData);
+      if(!err){
+        return (tknData);
+      }
+      else{
+        return(err)
+      }
     });
   }
 }
