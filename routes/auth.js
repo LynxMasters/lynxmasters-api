@@ -40,7 +40,7 @@ const configAuth = require('../config/auth')
 
 	app.get('/auth/twitter', function(req, res){
 		//if(req.user._id){
-			Tokens.twitterReq(function(err, data){
+		Tokens.twitterReq(function(err, data){
         res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
       });
        
@@ -48,7 +48,7 @@ const configAuth = require('../config/auth')
 	});
 
 	app.get('/auth/twitter/callback', function(req, res){
-    Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
-    res.redirect('http://localhost:8080/LinkAccounts')   
+    	Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
+    	res.redirect('http://localhost:8080/LinkAccounts')   
 	});   
 }
