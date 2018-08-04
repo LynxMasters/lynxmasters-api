@@ -4,9 +4,6 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const logger = require('morgan')
 const session = require('express-session')
-const mongoStore = require('connect-mongo')(session)
-const passport = require('passport');
-const flash    = require('connect-flash');
 const app = express()
 const mongoose = require('mongoose')
 require('dotenv').config()
