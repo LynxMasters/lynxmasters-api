@@ -105,12 +105,12 @@ module.exports = {
         return tkn(null, result);
       }
       else{
-        return(err, null)
+        return tkn(err, null)
       }
     });
   },
 
-  twitterAcs: function(tkn,verify) {
+  twitterAcs: function(tkn, verify, status) {
 
     const oauth = OAuth({
       consumer: {
@@ -146,10 +146,10 @@ module.exports = {
       console.log('-----------Twitter access_token---------------');
       console.log(tknData);
       if(!err){
-        return (tknData);
+        return status(null);
       }
       else{
-        return(err)
+        return status(err)
       }
     });
   }

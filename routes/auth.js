@@ -39,16 +39,18 @@ const configAuth = require('../config/auth');
 
 	app.get('/auth/twitter', function(req, res){
 		//if(req.user._id){
-			 Tokens.twitterReq(function(err, data){
-            res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
-          },
-        );
+			Tokens.twitterReq(function(err, data){
+        res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
+      });
        
 		//}
-
 	});
-	app.get('/auth/twitter/callback', function(req, res){
 
-    Tokens.twitterAcs(req.query.oauth_token,req.query.oauth_verifier);
+	app.get('/auth/twitter/callback', function(req, res){
+    Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, function(err, res){
+      if(!err){
+        res.redirect('http://localhost:8080/LinkAccounts')
+      }
+    })  
 	});   
 }
