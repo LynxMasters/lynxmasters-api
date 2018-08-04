@@ -47,10 +47,7 @@ const configAuth = require('../config/auth');
 	});
 
 	app.get('/auth/twitter/callback', function(req, res){
-    Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, function(err, res){
-      if(!err){
-        res.redirect('http://localhost:8080/LinkAccounts')
-      }
-    })  
+    Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
+    res.redirect('http://localhost:8080/LinkAccounts')   
 	});   
 }
