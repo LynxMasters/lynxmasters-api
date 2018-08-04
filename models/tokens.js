@@ -7,7 +7,7 @@ module.exports = {
 
 	reddit: function(code, err) {
     	
-    let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback'
+    let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback&state='
     request({
     	
       headers: {

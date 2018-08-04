@@ -13,9 +13,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors())
-app.set('view engine', 'ejs');
-
-
 
 mongoose.connect('mongodb://54.165.68.141:27017/lynxmasters', { useNewUrlParser: true })
 let db = mongoose.connection
@@ -24,11 +21,8 @@ db.once("open", function(callback){
   console.log("Connection Succeeded")
 })
 
-// config cookie parser middleware
 app.use(cookieParser())
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true, cookie: { maxAge: 60000 }}))//app.use(passport.initialize());
-//app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
 
 // configure routes here
 require('../routes/users')(app);
