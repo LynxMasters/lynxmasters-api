@@ -26,12 +26,8 @@ module.exports = {
       console.log('-----------Reddit access_token---------------')
   		console.log(tknData)
   		
-      if(tknData.access_token){
-  			return(tknData)
-  		}
-  		else{
-
-  			return(err);
+      if(tknData){
+  			return(true)
   		}
   	});
 	},
@@ -56,11 +52,8 @@ module.exports = {
       console.log('-----------Twitch access_token---------------')
   		console.log(tknData)
   		
-      if(tknData.access_token){
-  			return(tknData)
-  		}
-  		else{
-  			return(err)
+      if(tknData){
+  			return(true)
   		}
   	});
 	},

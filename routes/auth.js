@@ -12,11 +12,10 @@ const configAuth = require('../config/auth');
 
 	app.get('/auth/reddit/callback', function(req, res){
 		//if (req.query.state == req.session){
-    		if(req.query.code){
-    			if(Tokens.reddit(req.query.code)){
-    				res.redirect('http://localhost:8080/LinkAccounts')
-    			}
-    		}	
+    	if(req.query.code){
+    		Tokens.reddit(req.query.code)
+    		res.redirect('http://localhost:8080/LinkAccounts')
+    	}	
   		//}
 	});
 
@@ -30,9 +29,8 @@ const configAuth = require('../config/auth');
 	app.get('/auth/twitch/callback', function(req, res){
 		//if (req.query.state == req.session.state){
     		if(req.query.code){
-          if(Tokens.twitch(req.query.code)){
-    			   res.redirect('http://localhost:8080/LinkAccounts')
-          }
+          Tokens.twitch(req.query.code)
+    			res.redirect('http://localhost:8080/LinkAccounts') 
     		}		
   		//}
 	});
