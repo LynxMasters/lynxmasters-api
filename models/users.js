@@ -1,4 +1,4 @@
-const dbfactory = require('./database.js')
+const dbfactory = require('../config/database.js')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const moment = require('moment')
@@ -8,7 +8,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 const sgMail = require('@sendgrid/mail')
 const request = require ('request');
 require('dotenv').config({path:'./config/sendgrid.env'})
-let jwt = require('jsonwebtoken');
+
 
 
 const schema = {
