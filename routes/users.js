@@ -46,7 +46,6 @@ module.exports = (app, passport) => {
   app.post(`${path}/auth/login`, (req, res) => {
     Users.loginUser(req.body).then(
       (user) => {
-        
         res.send(user);
       },
       (err) => {

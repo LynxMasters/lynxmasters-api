@@ -45,7 +45,6 @@ const jwt = require('jsonwebtoken');
 	});
 
 	app.get('/auth/twitch/callback', function(req, res){
-
 		console.log(req.session.token);
 		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
@@ -64,6 +63,7 @@ const jwt = require('jsonwebtoken');
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
     		console.log('---user._id-jwt-decoded-----')	
     		console.log(decoded)
+    		req.session.token = jwt_token;
 			Tokens.twitterReq(function(err, data){
         	res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
         	})
