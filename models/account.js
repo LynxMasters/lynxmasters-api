@@ -8,10 +8,10 @@ var accountSchema = mongoose.Schema({
     twitch         : {
 
         id           : String,
-        access_token        : String,
-        refresh_token       : String,   
-        username            : String,
-        logo                : String        
+        access_token : String,
+        refresh_token: String,   
+        username     : String,
+        logo         : String        
         
     },
     twitter          : {
