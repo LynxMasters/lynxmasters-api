@@ -39,18 +39,23 @@ const jwt = require('jsonwebtoken');
     		console.log('---user._id-jwt-decoded-----')
 			console.log(decoded)
 			req.session.state = crypto.randomBytes(32).toString('hex');
+			req.session.token = jwt_token
 			res.redirect(configAuth.twitch.authorizeURL+req.session.state);
 		})
 	});
 
 	app.get('/auth/twitch/callback', function(req, res){
-		
-		if (req.query.state = req.session.state){
-    		if(req.query.code){
-          		Tokens.twitch(req.query.code)
-    			res.redirect('http://localhost:8080/LinkAccounts') 
-    		}		
-  		}
+
+		console.log(req.session.token);
+		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+			if (req.query.state = req.session.state){
+    			if(req.query.code){
+          			Tokens.twitch(req.query.code)
+    				res.redirect('http://localhost:8080/LinkAccounts') 
+    			}	
+    		}
+    	})			
 	});
 
 	app.get('/auth/twitter', function(req, res){
@@ -66,7 +71,11 @@ const jwt = require('jsonwebtoken');
 	});
 
 	app.get('/auth/twitter/callback', function(req, res){
-    	Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
-    	res.redirect('http://localhost:8080/LinkAccounts')   
+    	console.log(req.session.token);
+		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+			if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+    		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
+    		res.redirect('http://localhost:8080/LinkAccounts')   
+		})	
 	});   
 }
