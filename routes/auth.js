@@ -13,17 +13,23 @@ const jwt = require('jsonwebtoken');
     		console.log('---user._id-jwt-decoded-----')
     		console.log(decoded)
     		req.session.state = crypto.randomBytes(32).toString('hex');
+    		req.session.token = jwt_token
 			res.redirect(configAuth.reddit.authorizeURL+req.session.state);
   		})
 	});
 
 	app.get('/auth/reddit/callback', function(req, res){
-		if (req.query.state = req.session.state){
-    		if(req.query.code){
-    			Tokens.reddit(req.query.code)
-    			res.redirect('http://localhost:8080/LinkAccounts')
-    		}	
-  		}
+		//jwt_token stored as a session var
+		console.log(req.session.token);
+		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+    		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+			if (req.query.state = req.session.state){
+    			if(req.query.code){
+    				Tokens.reddit(req.query.code)
+    				res.redirect('http://localhost:8080/LinkAccounts')
+    			}	
+  			}
+  		})	  
 	});
 
 	app.get('/auth/twitch', function(req, res){

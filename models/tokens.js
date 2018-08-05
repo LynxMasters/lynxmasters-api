@@ -12,7 +12,6 @@ module.exports = {
     	
       headers: {
       	'Accept': 'application/x-www-form-urlencoded',
-      	'Content-Type': 'application/x-www-form-urlencoded',
       	'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R'//base64 encoded client_id:client_secret 
     	},
     	
