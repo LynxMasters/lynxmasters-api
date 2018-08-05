@@ -18,7 +18,7 @@ mongoose.connect('mongodb://54.165.68.141:27017/lynxmasters', { useNewUrlParser:
 let db = mongoose.connection
 db.on("error", console.error.bind(console, "connection error"))
 db.once("open", function(callback){
-  console.log("Connection Succeeded")
+  console.log("DB Connection Succeeded")
 })
 
 app.use(cookieParser())

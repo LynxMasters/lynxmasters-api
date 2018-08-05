@@ -23,8 +23,6 @@ module.exports = {
         'callbackURL'        : 'http://localhost:8081/auth/twitter/callback'
     },
     'jwt'     :{
-        'secret'             : 'thisisasecretjwt'
-
-
+        'secret'             : 'ZmpkcztsZmphbDfdfadsftma2ZubmdoZmdmbmfdfvadggafaafjthanZham5hcGppZ25hZG5zZmlwYW5ncw'
     }
 };

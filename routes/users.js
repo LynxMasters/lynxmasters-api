@@ -4,7 +4,7 @@ let path = '/api/v1';
 
 
 
-module.exports = (app, passport) => {
+module.exports = (app) => {
   // Add new user
   app.post(`${path}/users`, (req, res) => {
     Users.addUser(req.body).then(

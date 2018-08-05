@@ -4,14 +4,17 @@ const Tokens = require('../models/tokens')
 const crypto = require('crypto')
 const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
+let security = require('../config/encryption-decryption')
 
 
 	app.get('/auth/reddit', function(req, res){
 		var jwt_token = req.query.token;
 		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		let decryptedID = security.decrypt(decoded.id)
+    		console.log('------decryptedID------')
+    		console.log(decryptedID)
     		console.log('---user._id-jwt-decoded-----')
-    		console.log(decoded)
     		req.session.state = crypto.randomBytes(32).toString('hex');
     		req.session.token = jwt_token
 			res.redirect(configAuth.reddit.authorizeURL+req.session.state);
@@ -23,6 +26,9 @@ const jwt = require('jsonwebtoken');
 		console.log(req.session.token);
 		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		let decryptedID = security.decrypt(decoded.id)
+    		console.log('------decryptedID------')
+    		console.log(decryptedID)
 			if (req.query.state = req.session.state){
     			if(req.query.code){
     				Tokens.reddit(req.query.code)
@@ -36,6 +42,9 @@ const jwt = require('jsonwebtoken');
 		var jwt_token = req.query.token;
 		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		let decryptedID = security.decrypt(decoded.id)
+    		console.log('------decryptedID------')
+    		console.log(decryptedID)
     		console.log('---user._id-jwt-decoded-----')
 			console.log(decoded)
 			req.session.state = crypto.randomBytes(32).toString('hex');
@@ -48,6 +57,9 @@ const jwt = require('jsonwebtoken');
 		console.log(req.session.token);
 		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		let decryptedID = security.decrypt(decoded.id)
+    		console.log('------decryptedID------')
+    		console.log(decryptedID)
 			if (req.query.state = req.session.state){
     			if(req.query.code){
           			Tokens.twitch(req.query.code)
@@ -61,6 +73,9 @@ const jwt = require('jsonwebtoken');
 		var jwt_token = req.query.token;
 		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+    		let decryptedID = security.decrypt(decoded.id)	
+    		console.log('------decryptedID------')
+    		console.log(decryptedID)
     		console.log('---user._id-jwt-decoded-----')	
     		console.log(decoded)
     		req.session.token = jwt_token;
@@ -74,6 +89,9 @@ const jwt = require('jsonwebtoken');
     	console.log(req.session.token);
 		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
 			if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+			let decryptedID = security.decrypt(decoded.id)	
+			console.log('------decryptedID------')
+    		console.log(decryptedID)
     		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
     		res.redirect('http://localhost:8080/LinkAccounts')   
 		})	
