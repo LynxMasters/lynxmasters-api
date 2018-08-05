@@ -175,11 +175,12 @@ function loginUser(req) {
               delete cleanUser.__v
               delete cleanUser.emailConfirmationToken
               cleanUser.password = ''
-              var token = jwt.sign({ id: user._id linkedAccounts: user.linkedAccounts }, config.jwt.secret, {
+              var token = jwt.sign({ id: user._id }, config.jwt.secret, {
                 expiresIn: 86400 // expires in 24 hours
               });
               console.log(token)
-              resolve(token)
+              var loginCreds = {token: token, linkedAccounts: user.linkedAccounts};
+              resolve(loginCreds)
             }
           })
         }
