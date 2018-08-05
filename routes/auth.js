@@ -21,7 +21,7 @@ const jwt = require('jsonwebtoken');
 	app.get('/auth/reddit/callback', function(req, res){
 		//jwt_token stored as a session var
 		console.log(req.session.token);
-		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 			if (req.query.state = req.session.state){
     			if(req.query.code){
