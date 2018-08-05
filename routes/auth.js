@@ -7,11 +7,14 @@ const jwt = require('jsonwebtoken');
 
 
 	app.get('/auth/reddit', function(req, res){
-		var jwt_token = req.headers['x-access-token'];
-		//if(req.user._id){
-			req.session.state = crypto.randomBytes(32).toString('hex');
+		var jwt_token = req.query.token;
+		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+    		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		console.log('---user._id-jwt-decoded-----')
+    		console.log(decoded)
+    		req.session.state = crypto.randomBytes(32).toString('hex');
 			res.redirect(configAuth.reddit.authorizeURL+req.session.state);
-		//}
+  		})
 	});
 
 	app.get('/auth/reddit/callback', function(req, res){
@@ -24,10 +27,14 @@ const jwt = require('jsonwebtoken');
 	});
 
 	app.get('/auth/twitch', function(req, res){
-		var jwt_token = req.headers['x-access-token'];
+		var jwt_token = req.query.token;
+		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+    		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    		console.log('---user._id-jwt-decoded-----')
+			console.log(decoded)
 			req.session.state = crypto.randomBytes(32).toString('hex');
 			res.redirect(configAuth.twitch.authorizeURL+req.session.state);
-		//}
+		})
 	});
 
 	app.get('/auth/twitch/callback', function(req, res){
@@ -41,12 +48,15 @@ const jwt = require('jsonwebtoken');
 	});
 
 	app.get('/auth/twitter', function(req, res){
-		var jwt_token = req.headers['x-access-token'];
+		var jwt_token = req.query.token;
+		jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+    		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+    		console.log('---user._id-jwt-decoded-----')	
+    		console.log(decoded)
 			Tokens.twitterReq(function(err, data){
         	res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
-      });
-       
-		//}
+        	})
+		})
 	});
 
 	app.get('/auth/twitter/callback', function(req, res){
