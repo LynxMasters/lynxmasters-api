@@ -1,34 +1,35 @@
 const dbfactory = require('../config/database.js')
 
-const = schema = {
+const schema = {
     
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     
     twitch           : {
-        id           :{ type: String, defualt: null},
-        access_token :{ type: String, defualt: null},
-        refresh_token:{ type: String, defualt: null},  
-        username     :{ type: String, defualt: null},
-        logo         :{ type: String, defualt: null}        
+        id           :{ type: String, default: null},
+        access_token :{ type: String, default: null},
+        refresh_token:{ type: String, default: null},
+        username     :{ type: String, default: null},
+        logo         :{ type: String, default: null}
         
     },
     twitter          : {
-        id           :{ type: String, defualt: null},
-        ouath_token  :{ type: String, defualt: null},
-        ouath_secret :{ type: String, defualt: null},
-        displayName  :{ type: String, defualt: null},
-        logo         :{ type: String, defualt: null}
+        id           :{ type: String, default: null},
+        ouath_token  :{ type: String, default: null},
+        ouath_secret :{ type: String, default: null},
+        displayName  :{ type: String, default: null},
+        logo         :{ type: String, default: null}
           
     },
     reddit           : {
-        id           :{ type: String, defualt: null},
-        access,token :{ type: String, defualt: null},
-        refresh_token:{ type: String, defualt: null},
-        username:    :{ type: String, defualt: null},
-        logo         :{ type: String, defualt: null}
+        id           :{ type: String, default: null},
+        access_token :{ type: String, default: null},
+        refresh_token:{ type: String, default: null},
+        username     :{ type: String, default: null},
+        logo         :{ type: String, default: null}
     }
-
 }
+
+
 const Accounts = dbfactory("Accounts", schema)
 
 function addAccount(user_id) {
