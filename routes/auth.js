@@ -14,7 +14,6 @@ let security = require('../config/encryption-decryption')
     		let decryptedID = security.decrypt(decoded.id)
     		console.log('------decryptedID------')
     		console.log(decryptedID)
-    		console.log('---user._id-jwt-decoded-----')
     		req.session.state = crypto.randomBytes(32).toString('hex');
     		req.session.token = jwt_token
 			res.redirect(configAuth.reddit.authorizeURL+req.session.state);
@@ -29,10 +28,10 @@ let security = require('../config/encryption-decryption')
     		let decryptedID = security.decrypt(decoded.id)
     		console.log('------decryptedID------')
     		console.log(decryptedID)
-			if (req.query.state = req.session.state){
+			if (req.query.state == req.session.state){
     			if(req.query.code){
     				Tokens.reddit(req.query.code)
-    				res.redirect('http://localhost:8080/LinkAccounts')
+    				res.redirect('http://localhost:8080/LinkAccounts?status=success&type=reddit')
     			}	
   			}
   		})	  
@@ -45,8 +44,6 @@ let security = require('../config/encryption-decryption')
     		let decryptedID = security.decrypt(decoded.id)
     		console.log('------decryptedID------')
     		console.log(decryptedID)
-    		console.log('---user._id-jwt-decoded-----')
-			console.log(decoded)
 			req.session.state = crypto.randomBytes(32).toString('hex');
 			req.session.token = jwt_token
 			res.redirect(configAuth.twitch.authorizeURL+req.session.state);
@@ -60,10 +57,10 @@ let security = require('../config/encryption-decryption')
     		let decryptedID = security.decrypt(decoded.id)
     		console.log('------decryptedID------')
     		console.log(decryptedID)
-			if (req.query.state = req.session.state){
+			if (req.query.state == req.session.state){
     			if(req.query.code){
           			Tokens.twitch(req.query.code)
-    				res.redirect('http://localhost:8080/LinkAccounts') 
+    				res.redirect('http://localhost:8080/LinkAccounts?status=success&type=twitch') 
     			}	
     		}
     	})			
@@ -76,8 +73,6 @@ let security = require('../config/encryption-decryption')
     		let decryptedID = security.decrypt(decoded.id)	
     		console.log('------decryptedID------')
     		console.log(decryptedID)
-    		console.log('---user._id-jwt-decoded-----')	
-    		console.log(decoded)
     		req.session.token = jwt_token;
 			Tokens.twitterReq(function(err, data){
         	res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
@@ -93,7 +88,7 @@ let security = require('../config/encryption-decryption')
 			console.log('------decryptedID------')
     		console.log(decryptedID)
     		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
-    		res.redirect('http://localhost:8080/LinkAccounts')   
+    		res.redirect('http://localhost:8080/LinkAccounts?status=success&type=twitter')   
 		})	
 	});   
 }
