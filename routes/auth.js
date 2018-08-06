@@ -31,7 +31,7 @@ let security = require('../config/encryption-decryption')
 			if (req.query.state == req.session.state){
     			if(req.query.code){
     				Tokens.reddit(req.query.code)
-    				res.redirect('http://localhost:8080/LinkAccounts?status=success&type=reddit')
+    				res.redirect('http://localhost:8080/LinkAccounts')
     			}	
   			}
   		})	  
@@ -60,7 +60,7 @@ let security = require('../config/encryption-decryption')
 			if (req.query.state == req.session.state){
     			if(req.query.code){
           			Tokens.twitch(req.query.code)
-    				res.redirect('http://localhost:8080/LinkAccounts?status=success&type=twitch') 
+    				res.redirect('http://localhost:8080/LinkAccounts') 
     			}	
     		}
     	})			
@@ -88,7 +88,7 @@ let security = require('../config/encryption-decryption')
 			console.log('------decryptedID------')
     		console.log(decryptedID)
     		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
-    		res.redirect('http://localhost:8080/LinkAccounts?status=success&type=twitter')   
+    		res.redirect('http://localhost:8080/LinkAccounts')   
 		})	
 	});   
 }
