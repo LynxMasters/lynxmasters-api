@@ -20,6 +20,24 @@ let security = require('../config/encryption-decryption')
   		})
 	});
 
+    // app.get(`/auth/reddit/callback`, (req, res) => {
+    //     let jwt_token = req.headers['authorization']  
+    //     jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
+    //         if(req.query.code){
+    //             Tokens.reddit(req.query.code).then(
+    //                 (token) => {
+    //                     res.send(token)
+    //                 },
+    //                 (err) => {
+    //                     console.error(err)
+    //                 } 
+    //             )           
+    //         }else{
+    //             res.redirect(configAuth.reddit.authorizeURL+req.session.state)
+    //         }
+    //     }         
+    // })
+
 	app.get('/auth/reddit/callback', function(req, res){
 		//jwt_token stored as a session var
 		console.log(req.session.token);

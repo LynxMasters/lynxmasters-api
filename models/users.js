@@ -178,8 +178,8 @@ function loginUser(req) {
               cleanUser.password = ''
               let userID = user._id.toString()
               let encryptedID = security.encrypt(userID)
-              console.log(encrypted)
-              let token = jwt.sign({ id: encrypted }, config.jwt.secret, {
+              console.log(encryptedID)
+              let token = jwt.sign({ id: encryptedID }, config.jwt.secret, {
                 expiresIn: 86400 // expires in 24 hours
               })
               console.log(token)
