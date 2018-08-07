@@ -1,11 +1,12 @@
-const request = require ('request');
-const crypto = require('crypto');
-const OAuth = require('oauth-1.0a');
-const qs = require('qs');
+const request = require ('request')
+const crypto = require('crypto')
+const OAuth = require('oauth-1.0a')
+const qs = require('qs')
+let Accounts = require('./account')
 
 module.exports = {
 
-	reddit: function(code, err) {
+	reddit: function(code, userId, err) {
     	
     let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback&state='
     request({
@@ -21,21 +22,28 @@ module.exports = {
   	
     }, function (err, res, body) {
   		
-      let tknData = JSON.parse(body)
-      console.log('-----------Reddit access_token---------------')
-  		console.log(tknData)
+        let tknData = JSON.parse(body)
+        console.log('-----------Reddit access_token---------------')
+        console.log(tknData)
   		
-      if(tknData){
-  			// return(true)
+        if(tknData){
+        // return(true)
           return new Promise((resolve, reject) => {
-            resolve({message:'Im a primse!'})
-          }).then((response) => {
-            setTimeout(() => {
-              console.log(response)
-            }, 5000)
+              Accounts.updateAccountReddit(userId, tknData).then(
+                  (account) => {
+                      console.log("hitting account")
+                      console.log(account)
+                      resolve(true)
+                  },
+                  (err) => {
+                      console.log("got rejected")
+                      reject(err)
+                  }
+              )
           })
+
   		}
-  	});
+  	  });
 	},
 
 	twitch: function(code, err) {

@@ -48,7 +48,7 @@ let security = require('../config/encryption-decryption')
     		console.log(decryptedID)
 			if (req.query.state == req.session.state){
     			if(req.query.code){
-    				Tokens.reddit(req.query.code)
+    				Tokens.reddit(req.query.code, decryptedID)
     				res.redirect('http://localhost:8080/LinkAccounts')
     			}	
   			}

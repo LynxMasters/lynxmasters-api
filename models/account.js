@@ -65,11 +65,11 @@ function updateAccountReddit(user_id, data){
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
 
-      accounts.save(function (error) {
+      accounts.save(function (error, accounts) {
         if (error) {
           reject(error)
         }
-        resolve(true)
+        resolve(accounts)
       })
     })
   })
