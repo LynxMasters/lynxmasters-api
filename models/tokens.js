@@ -65,10 +65,22 @@ module.exports = {
       let tknData = JSON.parse(body)
       console.log('-----------Twitch access_token---------------')
   		console.log(tknData)
-  		
-      if(tknData){
-  			return(true)
-  		}
+  		if(tknData){
+        // return(true)
+        return new Promise((resolve, reject) => {
+          Accounts.updateAccountTwitch(userId, tknData).then(
+            (account) => {
+              console.log("hitting account")
+              console.log(account)
+              resolve(true)
+              },
+              (err) => {
+                console.log("got rejected")
+                reject(err)
+              }
+          )
+          })
+        }
   	});
 	},
 	

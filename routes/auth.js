@@ -77,7 +77,7 @@ let security = require('../config/encryption-decryption')
     		console.log(decryptedID)
 			if (req.query.state == req.session.state){
     			if(req.query.code){
-          			Tokens.twitch(req.query.code)
+          			Tokens.twitch(req.query.code, decryptedID)
     				res.redirect('http://localhost:8080/LinkAccounts') 
     			}	
     		}
