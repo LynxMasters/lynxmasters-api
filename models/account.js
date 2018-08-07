@@ -128,9 +128,21 @@ function updateAccountTwitter(user_id, data){
   })
 }
 
+function fetchOne(user_id){
+  return new Promise((resolve, reject) => {
+    Accounts.findOne({user: user_id}, function(error, accounts){
+      if(error){
+        reject(error)
+      }
+      resolve(accounts)
+    })
+  })
+}
+
 module.exports = {
  addAccount,
  updateAccountReddit,
  updateAccountTwitch,
- updateAccountTwitter
+ updateAccountTwitter,
+ fetchOne
 }

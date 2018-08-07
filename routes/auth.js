@@ -5,6 +5,8 @@ const crypto = require('crypto')
 const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
 let security = require('../config/encryption-decryption')
+let path = '/api/v1';
+const Accounts = require('../models/account')
 
 
 	app.get('/auth/reddit', function(req, res){
@@ -21,22 +23,25 @@ let security = require('../config/encryption-decryption')
 	});
 
     // app.get(`/auth/reddit/callback`, (req, res) => {
-    //     let jwt_token = req.headers['authorization']  
-    //     jwt.verify(jwt_token, configAuth.jwt.secret, function(err, decoded) {
-    //         if(req.query.code){
-    //             Tokens.reddit(req.query.code).then(
-    //                 (token) => {
-    //                     res.send(token)
-    //                 },
-    //                 (err) => {
-    //                     console.error(err)
-    //                 } 
-    //             )           
-    //         }else{
-    //             res.redirect(configAuth.reddit.authorizeURL+req.session.state)
-    //         }
-    //     }         
-    // })
+    //     jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret),function(err, decoded){ 
+    //     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    //     let decryptedID = security.decrypt(decoded.id)    
+    //         if(req.query.state == req.session.state && req.query.code != null){           
+    //             Tokens.reddit(req.query.code, decryptedID).then(
+    //              (token) => {
+    //                 res.send(token)
+    //             },
+    //             (err) => {
+    //                 console.error(err)
+    //              } 
+    //         )           
+    //     }else{
+    //         req.session.state = crypto.randomBytes(32).toString('hex');
+    //         req.session.token = jwt_token
+    //         res.redirect(configAuth.reddit.authorizeURL+req.session.state)
+    //     }
+    //    })             
+    // }
 
 	app.get('/auth/reddit/callback', function(req, res){
 		//jwt_token stored as a session var
@@ -108,5 +113,29 @@ let security = require('../config/encryption-decryption')
     		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decryptedID )
     		res.redirect('http://localhost:8080/LinkAccounts')   
 		})	
-	});   
+	});
+
+    app.post(`${path}/accounts/`, (req, res) => {
+        console.log(req.body.headers.Authorization)
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                reject(error)
+            }
+            else{
+            console.log(decoded)
+            let decryptedID = security.decrypt(decoded.id)
+            console.log(decryptedID)
+            Accounts.fetchOne(decryptedID).then(
+                (accounts) =>{
+                    console.log(accounts)
+                    res.send(accounts)
+                    },
+                    (err)=>{
+                        res.send(err)
+                    }
+                )
+            }
+        })
+    });
+    
 }
