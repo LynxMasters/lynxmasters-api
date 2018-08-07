@@ -1,4 +1,6 @@
 const dbfactory = require('../config/database.js')
+let mongoose = require('mongoose')
+let Schema = mongoose.Schema
 
 const schema = {
     
@@ -36,8 +38,19 @@ function addAccount(user_id) {
     let new_account = new Accounts({
         user: user_id
     })
-    new_account.save();
-},
+    return new Promise((resolve, reject) => {
+        new_account.save((error, account) => {
+            if (error) {
+                reject(error)
+            }
+            resolve({
+                account: account,
+                success: true,
+                message: 'Account DB was created successfully!'
+            })
+        })
+    })
+}
 
 function updateAccountReddit(user_id, data){
   return new Promise((resolve, reject) => {
