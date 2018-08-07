@@ -46,7 +46,7 @@ module.exports = {
   	  });
 	},
 
-	twitch: function(code, err) {
+	twitch: function(code, userId, err) {
 
     let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code='+code+'&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'	
     request({
@@ -129,7 +129,7 @@ module.exports = {
     });
   },
 
-  twitterAcs: function(tkn, verify) {
+  twitterAcs: function(tkn, verify, userId) {
 
     const oauth = OAuth({
       consumer: {
@@ -164,12 +164,22 @@ module.exports = {
       tknData = qs.parse(body);
       console.log('-----------Twitter access_token---------------');
       console.log(tknData);
-      if(!err){
-        return(null);
-      }
-      else{
-        return(err)
-      }
+      if(tknData){
+        // return(true)
+        return new Promise((resolve, reject) => {
+          Accounts.updateAccountTwitter(userId, tknData).then(
+            (account) => {
+              console.log("hitting account")
+              console.log(account)
+              resolve(true)
+              },
+              (err) => {
+                console.log("got rejected")
+                reject(err)
+              }
+          )
+          })
+        }
     });
   }
 }

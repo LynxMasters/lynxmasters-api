@@ -105,7 +105,7 @@ let security = require('../config/encryption-decryption')
 			let decryptedID = security.decrypt(decoded.id)	
 			console.log('------decryptedID------')
     		console.log(decryptedID)
-    		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier)
+    		Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decryptedID )
     		res.redirect('http://localhost:8080/LinkAccounts')   
 		})	
 	});   
