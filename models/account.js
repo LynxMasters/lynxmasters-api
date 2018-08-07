@@ -16,8 +16,8 @@ const schema = {
     },
     twitter          : {
         id           :{ type: String, default: null},
-        ouath_token  :{ type: String, default: null},
-        ouath_secret :{ type: String, default: null},
+        oauth_token  :{ type: String, default: null},
+        oauth_secret :{ type: String, default: null},
         displayName  :{ type: String, default: null},
         logo         :{ type: String, default: null}
           
@@ -54,7 +54,7 @@ function addAccount(user_id) {
 
 function updateAccountReddit(user_id, data){
   return new Promise((resolve, reject) => {
-    Accounts.findOne({user: user_id}, function (error, user) {
+    Accounts.findOne({user: user_id}, function (error, accounts) {
       if (error) {
         reject(error)
       }
@@ -77,7 +77,7 @@ function updateAccountReddit(user_id, data){
 
 function updateAccountTwitch(user_id, data){
     return new Promise((resolve, reject) => {
-        Accounts.findOne({user: user_id}, function (error, user) {
+        Accounts.findOne({user: user_id}, function (error, accounts) {
             if (error) {
                 reject(error)
             }
@@ -100,7 +100,7 @@ function updateAccountTwitch(user_id, data){
 
 function updateAccountTwitter(user_id, data){
   return new Promise((resolve, reject) => {
-    Accounts.findOne({user: user_id}, function (error, user) {
+    Accounts.findOne({user: user_id}, function (error, accounts) {
       if (error) {
         reject(error)
       }
