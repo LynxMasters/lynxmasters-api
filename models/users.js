@@ -11,6 +11,7 @@ let jwt = require('jsonwebtoken');
 let config = require('../config/auth')
 let security = require('../config/encryption-decryption')
 require('dotenv').config({path:'./config/sendgrid.env'})
+let Accounts = require('./account')
 
 
 
@@ -147,6 +148,8 @@ function addUser(request) {
           success: true,
           message: 'You\'ve successfully signed up!'
         })
+        // Create new Account
+        Accounts.addAccount(user._id)
       }
     })
   })

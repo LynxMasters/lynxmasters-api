@@ -26,7 +26,14 @@ module.exports = {
   		console.log(tknData)
   		
       if(tknData){
-  			return(true)
+  			// return(true)
+          return new Promise((resolve, reject) => {
+            resolve({message:'Im a primse!'})
+          }).then((response) => {
+            setTimeout(() => {
+              console.log(response)
+            }, 5000)
+          })
   		}
   	});
 	},
