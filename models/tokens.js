@@ -82,9 +82,8 @@ module.exports = {
           })
         }
   	});
-	},
+	}, 
 	
-
 	twitterReq: function(tkn) {	
     const oauth = OAuth({
       consumer: {
@@ -172,14 +171,14 @@ module.exports = {
               console.log("hitting account")
               console.log(account)
               resolve(true)
-              },
-              (err) => {
-                console.log("got rejected")
-                reject(err)
-              }
+            },
+            (err) => {
+              console.log("got rejected")
+              reject(err)
+            }
           )
-          })
-        }
-      })
+        })
+      }
+    })
   }
 } 
