@@ -245,21 +245,20 @@ const OAuth = require('oauth-1.0a')
  
                 const request_data = {
                     url: 'https://api.twitter.com/1.1/'+req.body.data.endpoint,
-                    method: 'GET',
-                    data: '' 
+                    method: 'GET'
                 };
- 
+                console.log(req.body.data.oauth_secret)
                 const token = {
                     key: req.body.data.oauth_token,
-                    secret: req.body.data.oauth_token_secret
+                    secret: req.body.data.oauth_secret
                 }; 
+                
                 return new Promise(function(resolve, reject){
-                    request.get({
+                    request({
+                        method: request_data.method,
+                        url: request_data.url,  
+                        headers: oauth.toHeader(oauth.authorize(request_data, token))
                         
-                        url: request_data.url,
-                        headers: oauth.toHeader(oauth.authorize(request_data, token)), 
-                        json:true
-                    
                     },function(err, res, body) {
                         if (err) return reject(err);
                         console.log(res);
