@@ -16,7 +16,7 @@ const schema = {
         
     },
     twitter          : {
-        id           :{ type: String, default: null},
+        user_id      :{ type: String, default: null},
         oauth_token  :{ type: String, default: null},
         oauth_secret :{ type: String, default: null},
         displayName  :{ type: String, default: null},
@@ -88,7 +88,7 @@ function updateAccountTwitch(user_id, data){
             }
             let expires = new Date().valueOf()+data.expires_in
             console.log(expires)
-            accounts.twitch.client_id = data.id
+            accounts.twitch.client_id = database.id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
             accounts.twitch.expires = expires.toString()
@@ -112,7 +112,7 @@ function updateAccountTwitter(user_id, data){
         reject(error)
       }
 
-      accounts.twitter.id = data.user_id
+      accounts.twitter.user_id = data.user_id
       accounts.twitter.oauth_token = data.oauth_token
       accounts.twitter.oauth_secret = data.oauth_token_secret
       accounts.twitter.displayName = data.screen_name
@@ -120,8 +120,8 @@ function updateAccountTwitter(user_id, data){
 
       accounts.save(function (error) {
         if (error) {
-                reject(error)
-            }
+          reject(error)
+        }
           resolve(accounts)
       })
     })

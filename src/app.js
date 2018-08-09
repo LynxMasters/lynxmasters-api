@@ -26,7 +26,7 @@ app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true
 
 // configure routes here
 require('../routes/users')(app);
-require('../routes/auth')(app);
+require('../routes/externalAPI')(app);
 require('express-debug')(app);
 
 module.exports = app

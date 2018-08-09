@@ -119,7 +119,7 @@ module.exports = {
       result = tknData.oauth_token;
         
       if(!err){
-        console.log(result);
+        console.log(result+'oauthTKN');
         return tkn(null, result);
       }
       else{
