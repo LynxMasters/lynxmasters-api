@@ -257,21 +257,22 @@ const OAuth = require('oauth-1.0a')
                     request.get({
                         
                         url: request_data.url,
-                        method: request_data.method,
-                        form: oauth.authorize(request_data,token)
+                        headers: oauth.toHeader(oauth.authorize(request_data, token)), 
+                        json:true
                     
-                    },function(err, res, user) {
+                    },function(err, res, body) {
                         if (err) return reject(err);
                         console.log(res);
+                        console.log(body.errors)
                         try {
-                            resolve(JSON.parse(user));
+                            resolve(JSON.parse(body));
                         } catch(e) {
                             reject(e);
                         }              
                     })
                 }).then(
-                    (user)=>{
-                        res.send(user)
+                    (body)=>{
+                        res.send(body)
                     },(err)=>{
                         res.send(err)
                     }
