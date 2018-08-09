@@ -30,7 +30,7 @@ const OAuth = require('oauth-1.0a')
     //         if(req.query.state == req.session.state && req.query.code != null){           
     //             Tokens.reddit(req.query.code, decryptedID).then(
     //              (acoounts) => {
-    //                 res.send(token)
+    //                 res.redirect("http://localhost:8080/LinkAccounts")
     //             },
     //             (err) => {
     //                 console.error(err)
@@ -160,7 +160,7 @@ const OAuth = require('oauth-1.0a')
                     //temporary fix ***without specified user agent request will error***
                         },
 
-                        url: 'https://oauth.reddit.com/api/v1/'+req.body.data.endpoint,
+                        url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
                         method: 'GET',
                     },function(err, res, body) {
                         if (err) return reject(err);
@@ -244,7 +244,7 @@ const OAuth = require('oauth-1.0a')
                 });
  
                 const request_data = {
-                    url: 'https://api.twitter.com/1.1/'+req.body.data.endpoint,
+                    url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
                     method: 'GET'
                 };
                 console.log(req.body.data.oauth_secret)
