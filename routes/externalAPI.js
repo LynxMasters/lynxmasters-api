@@ -103,21 +103,20 @@ let compareDT = require('../utils/time')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-                Accounts.fetchOne(decryptedID).then(
-                    (accounts) =>{ 
-                        if(compareDT.expired(accounts.reddit.expires)){
+                Accounts.fetchOne(decryptedID, function(error, accounts){
+                    if(compareDT.expired(accounts.reddit.expires)){
                             Tokens.redditRFSH(accounts)
-                        }
-                        if(compareDT.expired(accounts.twitch.expires)){
-                            Tokens.twitchRFSH(accounts)                     
-                        }  
-                         res.send(accounts)                   
-                    },
-                    (err)=>{
-                        res.send(err)
+                    }
+                    if(compareDT.expired(accounts.twitch.expires)){
+                            Tokens.twitchRFSH(accounts)      
+                    }
+                }).then(accounts => Accounts.fetchOne(accounts.user))
+                .then((accounts) =>{
+                        res.send(accounts) 
+                    },(err)=>{
+                        reject(err)
                     }
                 )
-
             }
         })
     });
