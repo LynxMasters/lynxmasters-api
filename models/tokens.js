@@ -1,11 +1,12 @@
-const request = require ('request');
-const crypto = require('crypto');
-const OAuth = require('oauth-1.0a');
-const qs = require('qs');
+const request = require ('request')
+const crypto = require('crypto')
+const OAuth = require('oauth-1.0a')
+const qs = require('qs')
+let Accounts = require('./account')
 
 module.exports = {
 
-	reddit: function(code, err) {
+	reddit: function(code, userId, err) {
     	
     let data = 'grant_type=authorization_code&code='+code+'&redirect_uri=http://localhost:8081/auth/reddit/callback&state='
     request({
@@ -21,17 +22,31 @@ module.exports = {
   	
     }, function (err, res, body) {
   		
-      let tknData = JSON.parse(body)
-      console.log('-----------Reddit access_token---------------')
-  		console.log(tknData)
+        let tknData = JSON.parse(body)
+        console.log('-----------Reddit access_token---------------')
+        console.log(tknData)
   		
-      if(tknData){
-  			return(true)
+        if(tknData){
+        // return(true)
+          return new Promise((resolve, reject) => {
+              Accounts.updateAccountReddit(userId, tknData).then(
+                  (account) => {
+                      console.log("hitting account")
+                      console.log(account)
+                      resolve(true)
+                  },
+                  (err) => {
+                      console.log("got rejected")
+                      reject(err)
+                  }
+              )
+          })
+
   		}
-  	});
+  	  });
 	},
 
-	twitch: function(code, err) {
+	twitch: function(code, userId, err) {
 
     let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code='+code+'&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'	
     request({
@@ -50,14 +65,25 @@ module.exports = {
       let tknData = JSON.parse(body)
       console.log('-----------Twitch access_token---------------')
   		console.log(tknData)
-  		
-      if(tknData){
-  			return(true)
-  		}
+  		if(tknData){
+        // return(true)
+        return new Promise((resolve, reject) => {
+          Accounts.updateAccountTwitch(userId, tknData).then(
+            (account) => {
+              console.log("hitting account")
+              console.log(account)
+              resolve(true)
+              },
+              (err) => {
+                console.log("got rejected")
+                reject(err)
+              }
+          )
+          })
+        }
   	});
-	},
+	}, 
 	
-
 	twitterReq: function(tkn) {	
     const oauth = OAuth({
       consumer: {
@@ -93,7 +119,7 @@ module.exports = {
       result = tknData.oauth_token;
         
       if(!err){
-        console.log(result);
+        console.log(result+'oauthTKN');
         return tkn(null, result);
       }
       else{
@@ -102,7 +128,7 @@ module.exports = {
     });
   },
 
-  twitterAcs: function(tkn, verify) {
+  twitterAcs: function(tkn, verify, userId) {
 
     const oauth = OAuth({
       consumer: {
@@ -137,12 +163,22 @@ module.exports = {
       tknData = qs.parse(body);
       console.log('-----------Twitter access_token---------------');
       console.log(tknData);
-      if(!err){
-        return(null);
+      if(tknData){
+        // return(true)
+        return new Promise((resolve, reject) => {
+          Accounts.updateAccountTwitter(userId, tknData).then(
+            (account) => {
+              console.log("hitting account")
+              console.log(account)
+              resolve(true)
+            },
+            (err) => {
+              console.log("got rejected")
+              reject(err)
+            }
+          )
+        })
       }
-      else{
-        return(err)
-      }
-    });
+    })
   }
-}
+} 

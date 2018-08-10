@@ -9,7 +9,9 @@ const sgMail = require('@sendgrid/mail')
 const request = require ('request');
 let jwt = require('jsonwebtoken');
 let config = require('../config/auth')
+let security = require('../config/encryption-decryption')
 require('dotenv').config({path:'./config/sendgrid.env'})
+let Accounts = require('./account')
 
 
 
@@ -146,6 +148,8 @@ function addUser(request) {
           success: true,
           message: 'You\'ve successfully signed up!'
         })
+        // Create new Account
+        Accounts.addAccount(user._id)
       }
     })
   })
@@ -175,7 +179,10 @@ function loginUser(req) {
               delete cleanUser.__v
               delete cleanUser.emailConfirmationToken
               cleanUser.password = ''
-              let token = jwt.sign({ id: user._id }, config.jwt.secret, {
+              let userID = user._id.toString()
+              let encryptedID = security.encrypt(userID)
+              console.log(encryptedID)
+              let token = jwt.sign({ id: encryptedID }, config.jwt.secret, {
                 expiresIn: 86400 // expires in 24 hours
               })
               console.log(token)
