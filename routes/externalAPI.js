@@ -260,7 +260,6 @@ const OAuth = require('oauth-1.0a')
                 res.send(error)
             }
             else{
-                let reddit = {}
                 console.log(decoded)
                 let decryptedID = security.decrypt(decoded.id)
                 console.log(decryptedID)
@@ -383,6 +382,89 @@ const OAuth = require('oauth-1.0a')
                     })
                 }).then(
                     (body)=>{
+                        res.send(body)
+                    },(err)=>{
+                        res.send(err)
+                    }
+                )     
+            }
+        })
+    });
+
+    app.post(`${path}/reddit/refresh/`, (req, res) => {
+        console.log(req.body.data)
+        jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.send(error)
+            }
+            else{
+                console.log(decoded)
+                let decryptedID = security.decrypt(decoded.id)
+                console.log(decryptedID)
+                return new Promise(function(resolve, reject){
+                    request({
+                
+                        headers: {
+                            'Accept': 'application/x-www-form-urlencoded',
+                            'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R',
+                            'User-Agent': req.body.data.user_agent 
+                        },
+                        url: 'https://oauth.reddit.com/api/v1/access_token',
+                        method: 'POST',
+                        form: 'grant_type=refresh_token&refresh_token='+req.body.data.refresh_token
+                    },function(err, res, body) {
+                        if (err) return reject(err);
+                        try {
+                            resolve(JSON.parse(body));
+                        } catch(e) {
+                            reject(e);
+                        }           
+                    })
+                }).then(
+                    (body)=>{
+                        console.log(body.data)
+                        Accounts.updateAccountReddit(decoded.id, body.data)
+                        res.send(body)
+                    },(err)=>{
+                        res.send(err)
+                    }
+                )     
+            }
+        })
+    });
+
+    app.post(`${path}/twitch/refresh`, (req, res) => {
+        console.log(req.body.data)
+        jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.send(error)
+            }
+            else{
+                console.log(decoded)
+                let decryptedID = security.decrypt(decoded.id)
+                console.log(decryptedID)
+                return new Promise(function(resolve, reject){
+                    request({
+                
+                        headers: {
+                            'Accept': 'application/x-www-form-urlencoded',
+                            'User-Agent': req.body.data.user_agent,
+                        },
+                        url: 'https://id.twitch.tv/oauth2/token',
+                        method: 'POST',
+                        form: '?grant_type=refresh_token&refresh_token='+req.body.data.refresh_token+'&client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq' 
+                    },function(err, res, body) {
+                        if (err) return reject(err);
+                        try {
+                            resolve(JSON.parse(body));
+                        } catch(e) {
+                            reject(e);
+                        }              
+                    })
+                }).then(
+                    (body)=>{
+                        console.log(body.data);
+                        Accounts.updateAccountTwitch(decoded.id, body.data)
                         res.send(body)
                     },(err)=>{
                         res.send(err)
