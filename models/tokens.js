@@ -184,6 +184,7 @@ module.exports = {
         })
     },
     redditRFSH: function (account) {
+        console.log(compareDT.expired(account.reddit.expires))
         if (compareDT.expired(account.reddit.expires)) {
             console.log('hitting function')
             return new Promise((resolve, reject) => {
@@ -220,8 +221,7 @@ module.exports = {
                     }
                 })
             })
-        }
-        else {
+        }else {
             return Promise.resolve(account)
         }
 
