@@ -203,6 +203,7 @@ module.exports = {
                   return err;    
                 }else{
                   console.log('true')
+                  tknData['refresh_token'] = account.reddit.refresh_token
                   console.log(tknData)
                   Accounts.updateAccountReddit(account.user, tknData).then(
                     (account)=> {
@@ -230,11 +231,11 @@ module.exports = {
               },
               url: 'https://id.twitch.tv/oauth2/token',
               method: 'POST',
-              form: 'grant_type=refresh_token&refresh_token='+account.twitch.refresh_token+'&client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq'
+              form: ' grant_type=refresh_token&refresh_token='+account.twitch.refresh_token+'&client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq'
               },function (err, res, body) {               
                 
                 let tknData = JSON.parse(body)
-                if(tknData.error != null){
+                if(tknData.error == null){
                   console.log('error')
                   console.log(tknData)
                   return err;    
