@@ -4,6 +4,7 @@ const OAuth = require('oauth-1.0a')
 const qs = require('qs')
 let Accounts = require('./account')
 
+
 module.exports = {
 
 	reddit: function(code, userId, err) {
@@ -180,5 +181,78 @@ module.exports = {
         })
       }
     })
-  }
+  },    
+  redditRFSH: function(account){
+      
+          console.log('hitting function')
+          request({
+              headers: {
+                  'Accept': 'application/x-www-form-urlencoded',
+                  'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R',
+                  'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+              },
+              url: 'https://www.reddit.com/api/v1/access_token',
+              method: 'POST',
+              form: 'grant_type=refresh_token&refresh_token='+account.reddit.refresh_token
+              },function (err, res, body) {               
+                
+                let tknData = JSON.parse(body)
+                if(tknData == null){
+                  console.log('error')
+                  console.log(tknData)
+                  return err;    
+                }else{
+                  console.log('true')
+                  console.log(tknData)
+                  Accounts.updateAccountReddit(account.user, tknData).then(
+                    (account)=> {
+                      console.log("hitting account")
+                      console.log(account)
+                      return account        
+                    },
+                    (err) => {
+                      console.log("got rejected")
+                      return err
+                    }
+                  )
+                }
+        });
+  },
+
+    twitchRFSH: function(account){
+      
+          console.log('hitting function')
+          request({
+              headers: {
+                  'Accept': 'application/x-www-form-urlencoded',
+                  'Content-Type': 'application/x-www-form-urlencoded', 
+                  'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+              },
+              url: 'https://id.twitch.tv/oauth2/token',
+              method: 'POST',
+              form: 'grant_type=refresh_token&refresh_token='+account.twitch.refresh_token+'&client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq'
+              },function (err, res, body) {               
+                
+                let tknData = JSON.parse(body)
+                if(tknData.error != null){
+                  console.log('error')
+                  console.log(tknData)
+                  return err;    
+                }else{
+                  console.log('true')
+                  console.log(tknData)
+                  Accounts.updateAccountTwitch(account.user, tknData).then(
+                    (account)=> {
+                      console.log("hitting account")
+                      console.log(account)
+                      return account        
+                    },
+                    (err) => {
+                      console.log("got rejected")
+                      return err
+                    }
+                  )
+                }
+        });
+  },
 } 

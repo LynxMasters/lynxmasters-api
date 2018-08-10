@@ -4,10 +4,11 @@ const Tokens = require('../models/tokens')
 const crypto = require('crypto')
 const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
-let security = require('../config/encryption-decryption')
+let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
 const OAuth = require('oauth-1.0a')
+let compareDT = require('../utils/time')
 
 
 	app.get('/auth/reddit', function(req, res){
@@ -95,39 +96,41 @@ const OAuth = require('oauth-1.0a')
 	});
 
     app.post(`${path}/accounts/`, (req, res) => {
-        console.log(req.body.headers.Authorization)
+        
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.send(error)
             }
             else{
-            console.log(decoded)
             let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-            Accounts.fetchOne(decryptedID).then(
-                (accounts) =>{
-                    
-                    res.send(accounts)
+                Accounts.fetchOne(decryptedID).then(
+                    (accounts) =>{ 
+                        if(compareDT.expired(accounts.reddit.expires)){
+                            Tokens.redditRFSH(accounts)
+                        }
+                        if(compareDT.expired(accounts.twitch.expires)){
+                            Tokens.twitchRFSH(accounts)                     
+                        }  
+                         res.send(accounts)                   
                     },
                     (err)=>{
                         res.send(err)
                     }
                 )
+
             }
         })
     });
 
     app.post(`${path}/redditGET/`, (req, res) => {
-        console.log(req.body.data)
+        
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.send(error)
             }
             else{
-                let reddit = {}
-                console.log(decoded)
+
                 let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
                 return new Promise(function(resolve, reject){
                     request({
                 
@@ -158,15 +161,14 @@ const OAuth = require('oauth-1.0a')
     });
     
     app.post(`${path}/twitchGET/`, (req, res) => {
-        console.log(req.body.data)
+        
         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.send(error)
             }
             else{
-                console.log(decoded)
+
                 let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
                 return new Promise(function(resolve, reject){
                     request({
                 
@@ -197,15 +199,14 @@ const OAuth = require('oauth-1.0a')
     });
         
     app.post(`${path}/twitterGET/`, (req, res) => {
-        console.log(req.body)
+       
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.send(error)
             }
             else{
-                console.log(decoded)
+                
                 let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
                 const oauth = OAuth({
                     consumer: {
                         key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
@@ -221,7 +222,7 @@ const OAuth = require('oauth-1.0a')
                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
                     method: 'GET'
                 };
-                console.log(req.body.data.oauth_secret)
+                
                 const token = {
                     key: req.body.data.oauth_token,
                     secret: req.body.data.oauth_secret
@@ -390,113 +391,4 @@ const OAuth = require('oauth-1.0a')
             }
         })
     });
-
-    app.post(`${path}/reddit/refresh/`, (req, res) => {
-        console.log(req.body.data)
-        jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.send(error)
-            }
-            else{
-                console.log(decoded)
-                let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
-                return new Promise(function(resolve, reject){
-                    request({
-                
-                        headers: {
-                            'Accept': 'application/x-www-form-urlencoded',
-                            'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R',
-                            'User-Agent': req.body.data.user_agent 
-                        },
-                        url: 'https://oauth.reddit.com/api/v1/access_token',
-                        method: 'POST',
-                        form: 'grant_type=refresh_token&refresh_token='+req.body.data.refresh_token
-                    },function(err, res, body) {
-                        if (err) return reject(err);
-                        try {
-                            resolve(JSON.parse(body));
-                        } catch(e) {
-                            reject(e);
-                        }           
-                    })
-                }).then(
-                    (body)=>{
-                        console.log(body.data)
-                        Accounts.updateAccountReddit(decoded.id, body.data)
-                        res.send(body)
-                    },(err)=>{
-                        res.send(err)
-                    }
-                )     
-            }
-        })
-    });
-
-    app.post(`${path}/twitch/refresh`, (req, res) => {
-        console.log(req.body.data)
-        jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.send(error)
-            }
-            else{
-                console.log(decoded)
-                let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
-                return new Promise(function(resolve, reject){
-                    request({
-                
-                        headers: {
-                            'Accept': 'application/x-www-form-urlencoded',
-                            'User-Agent': req.body.data.user_agent,
-                        },
-                        url: 'https://id.twitch.tv/oauth2/token',
-                        method: 'POST',
-                        form: '?grant_type=refresh_token&refresh_token='+req.body.data.refresh_token+'&client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq' 
-                    },function(err, res, body) {
-                        if (err) return reject(err);
-                        try {
-                            resolve(JSON.parse(body));
-                        } catch(e) {
-                            reject(e);
-                        }              
-                    })
-                }).then(
-                    (body)=>{
-                        console.log(body.data);
-                        Accounts.updateAccountTwitch(decoded.id, body.data)
-                        res.send(body)
-                    },(err)=>{
-                        res.send(err)
-                    }
-                )     
-            }
-        })
-    });
- }   
-
-    // app.get(`${path}/auth/reddit`, (req, res) => {
-    //     console.log(req.body.data)
-    //     jwt.verify(req.query.token, configAuth.jwt.secret, function(error, decoded){
-    //         if(error){
-    //             res.send(error)
-    //         }
-    //         else{
-    //             if(req.session.state == req.query.state & req.query.code != ''){
-    //                 let decryptedID = security.decrypt(decoded.id)
-    //                 console.log(decryptedID)
-    //                 Tokens.reddit(req.query.code, decryptedID).then(
-    //                     (success) => {
-    //                     }).then(
-    //                         (res) => {
-    //                         res.redirect()
-    //                     })
-    //                 res.redirect('http://localhost:8080/LinkAccounts')     
-    //             }
-    //             else{
-    //                 req.session.state = crypto.randomBytes(32).toString('hex');
-    //                 res.redirect(configAuth.reddit.authorizeURL+req.session.state); 
-    //             }
-    //         }  
-    //     })  
-    // })    
+}
