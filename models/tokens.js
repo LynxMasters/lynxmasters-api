@@ -184,44 +184,47 @@ module.exports = {
     })
   },    
   redditRFSH: function(account){
-    if(compareDT.expired(account.reddit.expires)){
+    if(!compareDT.expired(account.reddit.expires)){
           console.log('hitting function')
-          request({
-              headers: {
+          return new Promise((resolve, reject) => {
+            request({
+                headers: {
                   'Accept': 'application/x-www-form-urlencoded',
                   'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R',
                   'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-              },
-              url: 'https://www.reddit.com/api/v1/access_token',
-              method: 'POST',
-              form: 'grant_type=refresh_token&refresh_token='+account.reddit.refresh_token
+                },
+                url: 'https://www.reddit.com/api/v1/access_token',
+                method: 'POST',
+                form: 'grant_type=refresh_token&refresh_token='+account.reddit.refresh_token
               },function (err, res, body) {               
-                
                 let tknData = JSON.parse(body)
                 if(tknData.access_token == ''){
                   console.log('error')
                   console.log(tknData)
-                  return Promise.reject(err);    
+                  resolve(err)    
                 }else{
                   console.log('true')
                   tknData['refresh_token'] = account.reddit.refresh_token
-                  console.log(tknData)
+                  
                   Accounts.updateAccountReddit(account.user, tknData).then(
                     (account)=> {
                       console.log("hitting account")
                       console.log(account)
-                      return Promise.resolve(account)        
+                      resolve(account)   
                     },
-                    (err) => {
+                    (err) => {  
                       console.log("got rejected")
-                      return Promise.reject(err)
+                      reject(err)
                     }
                   )
-                }
-        });
-     }else{
-      return Promise.resolve(account)
-     }     
+                } 
+              })
+            })   
+          }
+          else{
+            return Promise.resolve(account)
+          }
+
   },
 
 twitchRFSH: function(account){
@@ -258,8 +261,8 @@ twitchRFSH: function(account){
                     }
                   )
                 }
-    
-        });
+        })
+    return Promise.resolve(account)      
     }else{
       return Promise.resolve(account)
     }

@@ -99,7 +99,7 @@ const OAuth = require('oauth-1.0a')
         
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                    res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
@@ -108,16 +108,15 @@ const OAuth = require('oauth-1.0a')
                     return Tokens.redditRFSH(result)
                 })
                 .then(result => {
-                   return Tokens.twitchRFSH(result) 
+                    return Tokens.twitchRFSH(result) 
                 })
-                .then((result) =>{
+                .then((result) => {
                     res.send(result)
-                })
-                 
+                })     
             }
         })
     });
-
+//TODO CLEAN UP CODE MOVE TO ANOTHER LOCATION
     app.post(`${path}/redditGET/`, (req, res) => {
         
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
