@@ -99,7 +99,7 @@ const OAuth = require('oauth-1.0a')
         
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
-                    res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
@@ -121,7 +121,7 @@ const OAuth = require('oauth-1.0a')
         
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
 
@@ -159,7 +159,7 @@ const OAuth = require('oauth-1.0a')
         
         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
 
@@ -197,7 +197,7 @@ const OAuth = require('oauth-1.0a')
        
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
                 
@@ -253,7 +253,7 @@ const OAuth = require('oauth-1.0a')
         console.log(req.body.data)
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
                 console.log(decoded)
@@ -333,7 +333,7 @@ const OAuth = require('oauth-1.0a')
         console.log(req.body)
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
                 console.log(decoded)
@@ -386,4 +386,58 @@ const OAuth = require('oauth-1.0a')
             }
         })
     });
-}
+
+    app.post(`${path}/unlink/twitter/`, (req, res) => {
+
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+            let decryptedID = security.decrypt(decoded.id)
+               Accounts.deleteAccountTwitter(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
+
+    app.post(`${path}/unlink/reddit/`, (req, res) => {
+
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+            let decryptedID = security.decrypt(decoded.id)
+               Accounts.deleteAccountReddit(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
+
+    app.post(`${path}/unlink/twitch/`, (req, res) => {
+
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+            let decryptedID = security.decrypt(decoded.id)
+               Accounts.deleteAccountTwitch(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
+}    
