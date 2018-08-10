@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const OAuth = require('oauth-1.0a')
 const qs = require('qs')
 let Accounts = require('./account')
+let compareDT = require('../utils/time')
 
 
 module.exports = {
@@ -183,7 +184,7 @@ module.exports = {
     })
   },    
   redditRFSH: function(account){
-      
+    if(compareDT.expired(account.reddit.expires)){
           console.log('hitting function')
           request({
               headers: {
@@ -200,7 +201,7 @@ module.exports = {
                 if(tknData.access_token == ''){
                   console.log('error')
                   console.log(tknData)
-                  return err;    
+                  return Promise.reject(err);    
                 }else{
                   console.log('true')
                   tknData['refresh_token'] = account.reddit.refresh_token
@@ -218,10 +219,13 @@ module.exports = {
                   )
                 }
         });
+     }else{
+      return Promise.resolve(account)
+     }     
   },
 
-    twitchRFSH: function(account){
-      
+twitchRFSH: function(account){
+   if(compareDT.expired(account.twitch.expires)){   
           console.log('hitting function')
           request({
               headers: {
@@ -238,7 +242,7 @@ module.exports = {
                 if(tknData.access_token == ''){
                   console.log('error')
                   console.log(tknData)
-                  return err;    
+                  return Promise.reject(err)    
                 }else{
                   console.log('true')
                   console.log(tknData)
@@ -246,14 +250,18 @@ module.exports = {
                     (account)=> {
                       console.log("hitting account")
                       console.log(account)
-                      return account        
+                      return Promise.resolve(account)        
                     },
                     (err) => {
                       console.log("got rejected")
-                      return err
+                      return Promise.reject(err)
                     }
                   )
                 }
+    
         });
+    }else{
+      return Promise.resolve(account)
+    }
   },
 } 

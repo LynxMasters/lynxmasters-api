@@ -8,7 +8,7 @@ let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
 const OAuth = require('oauth-1.0a')
-let compareDT = require('../utils/time')
+
 
 
 	app.get('/auth/reddit', function(req, res){
@@ -103,20 +103,17 @@ let compareDT = require('../utils/time')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-                Accounts.fetchOne(decryptedID).then(
-                    (accounts) =>{ 
-                        if(compareDT.expired(accounts.reddit.expires)){
-                            Tokens.redditRFSH(accounts)
-                        }
-                        if(compareDT.expired(accounts.twitch.expires)){
-                            Tokens.twitchRFSH(accounts)     
-                        }
-                        res.send(accounts)            
-                    },
-                    (err)=>{
-                        reject(err)
-                    }
-                )
+                Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Tokens.redditRFSH(result)
+                })
+                .then(result => {
+                   return Tokens.twitchRFSH(result) 
+                })
+                .then((result) =>{
+                    res.send(result)
+                })
+                 
             }
         })
     });
