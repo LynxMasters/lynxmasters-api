@@ -183,9 +183,10 @@ module.exports = {
             }
         })
     },
+    
     redditRFSH: function (account) {
         console.log(compareDT.expired(account.reddit.expires))
-        if (compareDT.expired(account.reddit.expires)) {
+        if (compareDT.expired(account.reddit.expires) != false) {
             console.log('hitting function')
             return new Promise((resolve, reject) => {
                 request({
@@ -198,6 +199,7 @@ module.exports = {
                     method: 'POST',
                     form: 'grant_type=refresh_token&refresh_token=' + account.reddit.refresh_token
                 }, function (err, res, body) {
+                    console.log(res)
                     let tknData = JSON.parse(body)
                     if (tknData.access_token == '') {
                         console.log('error')
@@ -224,11 +226,10 @@ module.exports = {
         }else {
             return Promise.resolve(account)
         }
-
     },
 
     twitchRFSH: function (account) {
-        if (compareDT.expired(account.twitch.expires)) {
+        if(compareDT.expired(account.twitch.expires) != false) {
             return new Promise((resolve, reject) => {
                 console.log('hitting function')
                 request({
