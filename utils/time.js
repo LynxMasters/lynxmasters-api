@@ -1,10 +1,11 @@
 
 module.exports = {
 	expired: function(time){
-		let now = new Date().valueOf()
+		let now = new Date()
+		now.setSeconds(-30)
 		console.log(now)	
 		console.log(time)
-		if(parseInt(time) < parseInt(now)){ return true;}
+		if(time < now){ return true;}
 		else { return false; }		  
 	},
 }

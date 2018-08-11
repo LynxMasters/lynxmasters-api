@@ -66,7 +66,7 @@ function updateAccountReddit(user_id, data){
       accounts.reddit.id = data.id
       accounts.reddit.access_token = data.access_token
       accounts.reddit.refresh_token = data.refresh_token
-      accounts.reddit.expires = expires.toString()
+      accounts.reddit.expires = expires.valueOf()
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
 
@@ -92,7 +92,7 @@ function updateAccountTwitch(user_id, data){
             accounts.twitch.client_id = data.id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
-            accounts.twitch.expires = expires.toString()
+            accounts.twitch.expires = expires.valueOf()
             accounts.twitch.username = data.username
             accounts.twitch.logo = data.logo
 

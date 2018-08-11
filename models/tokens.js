@@ -184,7 +184,7 @@ module.exports = {
         })
     },
     
-    redditRFSH: function (account) {
+    redditRFSH: function (account, user_agent) {
         console.log(compareDT.expired(account.reddit.expires))
         if (compareDT.expired(account.reddit.expires) != false) {
             console.log('hitting function')
@@ -193,7 +193,7 @@ module.exports = {
                     headers: {
                         'Accept': 'application/x-www-form-urlencoded',
                         'Authorization': 'Basic aDlOd1lVWkduNjVSSnc6dk9HSjFpdHZ5ZldIRV9aeGlBNWtZS0dXbC1R',
-                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                     },
                     url: 'https://www.reddit.com/api/v1/access_token',
                     method: 'POST',
@@ -227,7 +227,7 @@ module.exports = {
         }
     },
 
-    twitchRFSH: function (account) {
+    twitchRFSH: function (account, user_agent) {
         if(compareDT.expired(account.twitch.expires) != false) {
             return new Promise((resolve, reject) => {
                 console.log('hitting function')
@@ -235,7 +235,7 @@ module.exports = {
                     headers: {
                         'Accept': 'application/x-www-form-urlencoded',
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                     },
                     url: 'https://id.twitch.tv/oauth2/token',
                     method: 'POST',

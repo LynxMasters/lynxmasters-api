@@ -7,9 +7,8 @@ const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
+const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
-
-
 
 	app.get('/auth/reddit', function(req, res){
 		var jwt_token = req.query.token;
@@ -101,14 +100,44 @@ const OAuth = require('oauth-1.0a')
             if(error){
                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
-            else{
+            else{  
             let decryptedID = security.decrypt(decoded.id)
                 Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Tokens.redditRFSH(result)
+                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
                 })
                 .then(result => {
-                    return Tokens.twitchRFSH(result) 
+                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })
+                .catch((err) => {
+                    res.send(err)
+                });   
+            }
+        })
+    });
+
+    app.post(`${path}/profiles/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }else{
+               
+            let decryptedID = security.decrypt(decoded.id)
+            Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Request.redditProfile(result, )
+                })
+                .then(result => {
+                    this.reddit = result;
+                    return Request.twitchProfile(result, )
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitterProfile(result) 
                 })
                 .then((result) => {
                     res.send(result)
@@ -116,6 +145,54 @@ const OAuth = require('oauth-1.0a')
             }
         })
     });
+
+    app.post(`${path}/feeds/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{  
+            let decryptedID = security.decrypt(decoded.id)
+            let acc = Accounts.fetchOne(decryptedID)
+            Request.redditFeed(acc, req.headers['User-Agent'])
+                .then(result => {
+                    this.reddit = result;
+                    return Request.twitchFeed(acc, req.headers['User-Agent'])
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitchFeed(acc) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })     
+            }
+        })
+    });
+
+    app.post(`${path}/friends/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{   
+            let decryptedID = security.decrypt(decoded.id)
+                Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
+                })
+                .then(result => {
+                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })     
+            }
+        })
+    });
+
 //TODO CLEAN UP CODE MOVE TO ANOTHER LOCATION
     app.post(`${path}/redditGET/`, (req, res) => {
         
