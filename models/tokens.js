@@ -199,7 +199,6 @@ module.exports = {
                     method: 'POST',
                     form: 'grant_type=refresh_token&refresh_token=' + account.reddit.refresh_token
                 }, function (err, res, body) {
-                    console.log(res)
                     let tknData = JSON.parse(body)
                     if (tknData.access_token == '') {
                         console.log('error')

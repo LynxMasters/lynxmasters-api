@@ -60,8 +60,9 @@ function updateAccountReddit(user_id, data){
       if (error) {
         reject(error)
       }
-      let expires = new Date().valueOf()+data.expires_in
-      console.log(expires)
+      let expires = new Date()
+      expires.setSeconds(data.expires_in)
+      console.log(expires)    
       accounts.reddit.id = data.id
       accounts.reddit.access_token = data.access_token
       accounts.reddit.refresh_token = data.refresh_token
@@ -85,7 +86,8 @@ function updateAccountTwitch(user_id, data){
             if (error) {
                 reject(error)
             }
-            let expires = new Date().valueOf()+data.expires_in
+            let expires = new Date()
+            expires.setSeconds(data.expires_in)
             console.log(expires)
             accounts.twitch.client_id = data.id
             accounts.twitch.access_token = data.access_token
