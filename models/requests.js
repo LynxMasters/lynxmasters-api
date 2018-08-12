@@ -102,7 +102,7 @@ module.exports = {
                 if (err) return reject(err);
                 console.log(body)     
                
-                let twitter = body
+                let twitter = JSON.parse(body)
                 let account = result.account
                 let reddit = result.reddit
                 let twitch = result.twitch
