@@ -57,7 +57,6 @@ module.exports = {
                     reddit,
                     twitch   
                 }
-                Accounts.updateAccountTwitch(result.account.user, twitch)
 
                 if (twitch.error) {
                     console.log('error twitch profile')
