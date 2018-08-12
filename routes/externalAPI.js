@@ -104,10 +104,10 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
                 Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
+                    return Tokens.redditRFSH(result)
                 })
                 .then(result => {
-                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                    return Tokens.twitchRFSH(result) 
                 })
                 .then((result) => {
                     res.send(result)
@@ -129,11 +129,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditProfile(result, )
+                    return Request.redditProfile(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchProfile(result, )
+                    return Request.twitchProfile(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -156,11 +156,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditFeed(result, )
+                    return Request.redditFeed(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchFeed(result, )
+                    return Request.twitchFeed(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -183,11 +183,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditFriends(result, )
+                    return Request.redditFriends(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchFriends(result, )
+                    return Request.twitchFriends(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -479,7 +479,7 @@ const OAuth = require('oauth-1.0a')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountTwitter(decoded.id)
+               Accounts.deleteAccountTwitter(decryptedID)
                .then((result) =>{
                     res.send(result)
                },(err) => {
@@ -497,7 +497,7 @@ const OAuth = require('oauth-1.0a')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountReddit(decoded.id)
+               Accounts.deleteAccountReddit(decryptedID)
                .then((result) =>{
                     res.send(result)
                },(err) => {
@@ -515,7 +515,7 @@ const OAuth = require('oauth-1.0a')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountTwitch(decoded.id)
+               Accounts.deleteAccountTwitch(decryptedID)
                .then((result) =>{
                     res.send(result)
                },(err) => {
