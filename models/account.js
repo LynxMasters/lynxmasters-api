@@ -161,10 +161,11 @@ function deleteAccountReddit(user_id){
       }
       console.log(accounts)
 
-      accounts.reddit.user_id = null
-      accounts.reddit.oauth_token = null
-      accounts.reddit.oauth_secret = null
-      accounts.reddit.displayName = null
+      accounts.reddit.id = null
+      accounts.reddit.access_token = null
+      accounts.reddit.refresh_token = null
+      accounts.reddit.expires = null
+      accounts.reddit.username = null
       accounts.reddit.logo = null
 
       accounts.save(function (error) {
@@ -184,11 +185,15 @@ function deleteAccountTwitch(user_id){
         reject(error)
       }
 
-      accounts.twitch.user_id = null
-      accounts.twitch.oauth_token = null
-      accounts.twitch.oauth_secret = null
-      accounts.twitch.displayName = null
+      console.log(accounts)
+
+      accounts.twitch.client_id  = null
+      accounts.twitch.access_token = null
+      accounts.twitch.refresh_token = null
+      accounts.twitch.expires = null
       accounts.twitch.logo = null
+
+      console.log(accounts)
 
       accounts.save(function (error) {
         if (error) {
