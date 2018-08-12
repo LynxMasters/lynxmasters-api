@@ -151,18 +151,20 @@ const OAuth = require('oauth-1.0a')
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{  
+            }else{
+               
             let decryptedID = security.decrypt(decoded.id)
-            let acc = Accounts.fetchOne(decryptedID)
-            Request.redditFeed(acc, req.headers['User-Agent'])
+            Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Request.redditFeed(result, )
+                })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchFeed(acc, req.headers['User-Agent'])
+                    return Request.twitchFeed(result, )
                 })
                 .then(result => {
                     this.twitch = result
-                    return Request.twitchFeed(acc) 
+                    return Request.twitterFeed(result) 
                 })
                 .then((result) => {
                     res.send(result)
@@ -176,15 +178,20 @@ const OAuth = require('oauth-1.0a')
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{   
+            }else{
+               
             let decryptedID = security.decrypt(decoded.id)
-                Accounts.fetchOne(decryptedID)
+            Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
+                    return Request.redditFriends(result, )
                 })
                 .then(result => {
-                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                    this.reddit = result;
+                    return Request.twitchFriends(result, )
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitterFriends(result) 
                 })
                 .then((result) => {
                     res.send(result)
