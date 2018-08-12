@@ -4,11 +4,11 @@ const Tokens = require('../models/tokens')
 const crypto = require('crypto')
 const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
-let security = require('../config/encryption-decryption')
+let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
+const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
-
 
 	app.get('/auth/reddit', function(req, res){
 		var jwt_token = req.query.token;
@@ -23,29 +23,7 @@ const OAuth = require('oauth-1.0a')
   		})
 	});
 
-    // app.get(`/auth/reddit/callback`, (req, res) => {
-    //     jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret),function(err, decoded){ 
-    //     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-    //     let decryptedID = security.decrypt(decoded.id)    
-    //         if(req.query.state == req.session.state && req.query.code != null){           
-    //             Tokens.reddit(req.query.code, decryptedID).then(
-    //              (acoounts) => {
-    //                 res.redirect("http://localhost:8080/LinkAccounts")
-    //             },
-    //             (err) => {
-    //                 console.error(err)
-    //              } 
-    //         )           
-    //     }else{
-    //         req.session.state = crypto.randomBytes(32).toString('hex');
-    //         req.session.token = jwt_token
-    //         res.redirect(configAuth.reddit.authorizeURL+req.session.state)
-    //     }
-    //    })             
-    // }
-
 	app.get('/auth/reddit/callback', function(req, res){
-		//jwt_token stored as a session var
 		console.log(req.session.token);
 		jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
     		if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
@@ -117,49 +95,129 @@ const OAuth = require('oauth-1.0a')
 	});
 
     app.post(`${path}/accounts/`, (req, res) => {
-        console.log(req.body.headers.Authorization)
+        
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
-            else{
-            console.log(decoded)
+            else{  
             let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-            Accounts.fetchOne(decryptedID).then(
-                (accounts) =>{
-                    console.log(accounts)
-                    res.send(accounts)
-                    },
-                    (err)=>{
-                        res.send(err)
-                    }
-                )
+                Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
+                })
+                .then(result => {
+                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })
+                .catch((err) => {
+                    res.send(err)
+                });   
             }
         })
     });
 
+    app.post(`${path}/profiles/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }else{
+               
+            let decryptedID = security.decrypt(decoded.id)
+            Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Request.redditProfile(result, )
+                })
+                .then(result => {
+                    this.reddit = result;
+                    return Request.twitchProfile(result, )
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitterProfile(result) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })     
+            }
+        })
+    });
+
+    app.post(`${path}/feeds/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }else{
+               
+            let decryptedID = security.decrypt(decoded.id)
+            Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Request.redditFeed(result, )
+                })
+                .then(result => {
+                    this.reddit = result;
+                    return Request.twitchFeed(result, )
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitterFeed(result) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })     
+            }
+        })
+    });
+
+    app.post(`${path}/friends/`, (req, res) => {
+        
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }else{
+               
+            let decryptedID = security.decrypt(decoded.id)
+            Accounts.fetchOne(decryptedID)
+                .then(result => {
+                    return Request.redditFriends(result, )
+                })
+                .then(result => {
+                    this.reddit = result;
+                    return Request.twitchFriends(result, )
+                })
+                .then(result => {
+                    this.twitch = result
+                    return Request.twitterFriends(result) 
+                })
+                .then((result) => {
+                    res.send(result)
+                })     
+            }
+        })
+    });
+
+//TODO CLEAN UP CODE MOVE TO ANOTHER LOCATION
     app.post(`${path}/redditGET/`, (req, res) => {
-        console.log(req.body.data)
+        
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
-                let reddit = {}
-                console.log(decoded)
+
                 let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
                 return new Promise(function(resolve, reject){
                     request({
                 
                         headers: {
                             'Accept': 'application/x-www-form-urlencoded',
                             'Authorization': 'bearer '+req.body.data.access_token,
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0' 
-                    //temporary fix ***without specified user agent request will error***
+                            'User-Agent': req.body.data.user_agent
                         },
-
                         url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
                         method: 'GET',
                     },function(err, res, body) {
@@ -179,28 +237,25 @@ const OAuth = require('oauth-1.0a')
                 )     
             }
         })
-    }),
+    });
     
     app.post(`${path}/twitchGET/`, (req, res) => {
-        console.log(req.body.data)
+        
         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
-                console.log(decoded)
+
                 let decryptedID = security.decrypt(decoded.id)
-                console.log(decryptedID)
                 return new Promise(function(resolve, reject){
                     request({
                 
                         headers: {
                             'Accept': 'application/x-www-form-urlencoded',
                             'Authorization': 'Oauth '+req.body.data.access_token,
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0',
-                            
-                        //temporary fix ***without specified user agent request will error***
-                            },
+                            'User-Agent': req.body.data.user_agent,    
+                        },
                         url: 'https://api.twitch.tv/kraken'+req.body.data.endpoint,
                         method: 'GET',
                     },function(err, res, body) {
@@ -220,13 +275,149 @@ const OAuth = require('oauth-1.0a')
                 )     
             }
         })
-    }),
+    });
         
     app.post(`${path}/twitterGET/`, (req, res) => {
+       
+        jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+                
+                let decryptedID = security.decrypt(decoded.id)
+                const oauth = OAuth({
+                    consumer: {
+                        key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
+                        secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+                    },
+                    signature_method: 'HMAC-SHA1',
+                    hash_function(base_string, key) {
+                        return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+                    }
+                });
+ 
+                const request_data = {
+                    url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
+                    method: 'GET'
+                };
+                
+                const token = {
+                    key: req.body.data.oauth_token,
+                    secret: req.body.data.oauth_secret
+                }; 
+                
+                return new Promise(function(resolve, reject){
+                    request({
+                        method: request_data.method,
+                        url: request_data.url,  
+                        headers: oauth.toHeader(oauth.authorize(request_data, token))
+                        
+                    },function(err, res, body) {
+                        if (err) return reject(err);
+                        
+                        try {
+                            resolve(JSON.parse(body));
+                        } catch(e) {
+                            reject(e);
+                        }              
+                    })
+                }).then(
+                    (body)=>{
+                        res.send(body)
+                    },(err)=>{
+                        res.send(err)
+                    }
+                )     
+            }
+        })
+    });
+
+        app.post(`${path}/redditPOST/`, (req, res) => {
+        console.log(req.body.data)
+        jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+                console.log(decoded)
+                let decryptedID = security.decrypt(decoded.id)
+                console.log(decryptedID)
+                return new Promise(function(resolve, reject){
+                    request({
+                
+                        headers: {
+                            'Accept': 'application/x-www-form-urlencoded',
+                            'Authorization': 'bearer '+req.body.data.access_token,
+                            'User-Agent': req.body.data.user_agent 
+                        },
+                        url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
+                        method: 'POST',
+                        form: req.body.data.params
+                    },function(err, res, body) {
+                        if (err) return reject(err);
+                        try {
+                            resolve(JSON.parse(body));
+                        } catch(e) {
+                            reject(e);
+                        }           
+                    })
+                }).then(
+                    (body)=>{
+                        res.send(body)
+                    },(err)=>{
+                        res.send(err)
+                    }
+                )     
+            }
+        })
+    });
+
+    app.post(`${path}/twitchPOST/`, (req, res) => {
+        console.log(req.body.data)
+        jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.send(error)
+            }
+            else{
+                console.log(decoded)
+                let decryptedID = security.decrypt(decoded.id)
+                console.log(decryptedID)
+                return new Promise(function(resolve, reject){
+                    request({
+                
+                        headers: {
+                            'Accept': 'application/x-www-form-urlencoded',
+                            'Authorization': 'Oauth '+req.body.data.access_token,
+                            'User-Agent': req.body.data.user_agent,
+                        },
+                        url: 'https://api.twitch.tv/kraken'+req.body.data.endpoint,
+                        method: 'POST',
+                        form: req.body.data.params
+                    },function(err, res, body) {
+                        if (err) return reject(err);
+                        try {
+                            resolve(JSON.parse(body));
+                        } catch(e) {
+                            reject(e);
+                        }              
+                    })
+                }).then(
+                    (body)=>{
+                        res.send(body)
+                    },(err)=>{
+                        res.send(err)
+                    }
+                )     
+            }
+        })
+    });
+
+    app.post(`${path}/twitterPOST/`, (req, res) => {
         console.log(req.body)
         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
                 console.log(decoded)
@@ -245,7 +436,8 @@ const OAuth = require('oauth-1.0a')
  
                 const request_data = {
                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
-                    method: 'GET'
+                    method: 'POST',
+                    form: req.body.data.params
                 };
                 console.log(req.body.data.oauth_secret)
                 const token = {
@@ -261,8 +453,7 @@ const OAuth = require('oauth-1.0a')
                         
                     },function(err, res, body) {
                         if (err) return reject(err);
-                        console.log(res);
-                        console.log(body.errors)
+                        
                         try {
                             resolve(JSON.parse(body));
                         } catch(e) {
@@ -278,121 +469,59 @@ const OAuth = require('oauth-1.0a')
                 )     
             }
         })
-    }),
+    });
 
-    app.post(`${path}/redditPOST/`, (req, res) => {
-        console.log(req.body.headers.Authorization)
-        jwt.verify(req.body.headers, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.send(error)
-            }
-            else{
-            console.log(decoded)
-            let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-            
-            request({
+    app.post(`${path}/unlink/twitter/`, (req, res) => {
 
-                headers: {
-                    'Accept': 'application/x-www-form-urlencoded',
-                    'Authorization': 'bearer '+req.body.access_token//base64 encoded client_id:client_secret 
-                },
-      
-                url: 'https://oauth.reddit.com/'+req.body.data.url,
-                method: 'GET',
-                form: req.body.data.params
-
-            }).then(reddit => {
-                res.send(reddit)
-            },
-            (err =>{
-                res.send(err)
-            })
-            )
-        }
-    })
-    }),
-
-            app.post(`${path}/twitchPOST/`, (req, res) => {
-        console.log(req.body)
-        jwt.verify(req.body, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.send(error)
-            }
-            else{
-            console.log(decoded)
-            let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-            
-            request({
-
-                headers: {
-                    'Accept': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Oauth '+req.body.data.access_token//base64 encoded client_id:client_secret 
-                },
-      
-                url: 'https://api.twitch.tv/kraken'+req.body.data.url,
-                method: 'POST',
-                form: req.body.data.params
-
-            }).then(twitch => {
-                res.send(twitch)
-            },
-            (err =>{
-                res.send(err)
-            })
-            )
-        }
-    })
-    }),
-
-    app.post(`${path}/twitterPOST/`, (req, res) => {
-        console.log(req.body.headers.Authorization)
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
-                res.send(error)
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
-            console.log(decoded)
             let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-            const oauth = OAuth({
-                consumer: {
-                    key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-                    secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
-                },
-                signature_method: 'HMAC-SHA1',
-                hash_function(base_string, key) {
-                    return crypto.createHmac('sha1', key).update(base_string).digest('base64');
-                }
-            });
- 
-            const request_data = {
-                url: 'https://api.twitter.com/'+req.body.data.endpoint,
-                method: 'POST',
-                data: req.body.data 
-            };
- 
-            const token = {
-                key: req.body.data.access_token,
-                secret: req.body.data.access_token_secret
-            };
- 
-            request({
-      
-                url: request_data.url,
-                method: request_data.method,
-                form: oauth.authorize(request_data, token)
+               Accounts.deleteAccountTwitter(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
 
-            }).then(twitter => {
-                res.send(twitter)
-            },
-            (err =>{
-                res.send(err)
-            })
-            )
-        }
-    })
-    }) 
-}      
-    
+    app.post(`${path}/unlink/reddit/`, (req, res) => {
+
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+            let decryptedID = security.decrypt(decoded.id)
+               Accounts.deleteAccountReddit(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
+
+    app.post(`${path}/unlink/twitch/`, (req, res) => {
+
+        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
+            if(error){
+                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+            }
+            else{
+            let decryptedID = security.decrypt(decoded.id)
+               Accounts.deleteAccountTwitch(decoded.id)
+               .then((result) =>{
+                    res.send(result)
+               },(err) => {
+                    res.send(err)
+               }) 
+            }
+        })
+    });
+}    

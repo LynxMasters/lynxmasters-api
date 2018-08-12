@@ -60,13 +60,13 @@ function updateAccountReddit(user_id, data){
       if (error) {
         reject(error)
       }
-      let expires = new Date().valueOf()+data.expires_in
-      console.log(expires)
-      
+      let expires = new Date()
+      expires.setSeconds(data.expires_in)
+      console.log(expires)    
       accounts.reddit.id = data.id
       accounts.reddit.access_token = data.access_token
       accounts.reddit.refresh_token = data.refresh_token
-      accounts.reddit.expires = expires.toString()
+      accounts.reddit.expires = expires.valueOf()
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
 
@@ -86,12 +86,13 @@ function updateAccountTwitch(user_id, data){
             if (error) {
                 reject(error)
             }
-            let expires = new Date().valueOf()+data.expires_in
+            let expires = new Date()
+            expires.setSeconds(data.expires_in)
             console.log(expires)
             accounts.twitch.client_id = data.id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
-            accounts.twitch.expires = expires.toString()
+            accounts.twitch.expires = expires.valueOf()
             accounts.twitch.username = data.username
             accounts.twitch.logo = data.logo
 
@@ -117,6 +118,75 @@ function updateAccountTwitter(user_id, data){
       accounts.twitter.oauth_secret = data.oauth_token_secret
       accounts.twitter.displayName = data.screen_name
       accounts.twitter.logo = data.logo
+
+      accounts.save(function (error) {
+        if (error) {
+          reject(error)
+        }
+          resolve(accounts)
+      })
+    })
+  })
+}
+
+function deleteAccountTwitter(user_id){
+  return new Promise((resolve, reject) => {
+    Accounts.findOne({user: user_id}, function (error, accounts) {
+      if (error) {
+        reject(error)
+      }
+
+      accounts.twitter.user_id = ''
+      accounts.twitter.oauth_token = ''
+      accounts.twitter.oauth_secret = ''
+      accounts.twitter.displayName = ''
+      accounts.twitter.logo = ''
+
+      accounts.save(function (error) {
+        if (error) {
+          reject(error)
+        }
+          resolve(accounts)
+      })
+    })
+  })
+}
+
+function deleteAccountReddit(user_id){
+  return new Promise((resolve, reject) => {
+    Accounts.findOne({user: user_id}, function (error, accounts) {
+      if (error) {
+        reject(error)
+      }
+
+      accounts.reddit.user_id = ''
+      accounts.reddit.oauth_token = ''
+      accounts.reddit.oauth_secret = ''
+      accounts.reddit.displayName = ''
+      accounts.reddit.logo = ''
+
+      accounts.save(function (error) {
+        if (error) {
+          reject(error)
+        }
+          resolve(accounts)
+      })
+    })
+  })
+}
+
+function deleteAccountTwitch(user_id){
+  return new Promise((resolve, reject) => {
+    Accounts.findOne({user: user_id}, function (error, accounts) {
+      if (error) {
+        reject(error)
+      }
+
+      accounts.twitch.user_id = ''
+      accounts.twitch.oauth_token = ''
+      accounts.twitch.oauth_secret = ''
+      accounts.twitch.displayName = ''
+      accounts.twitch.logo = ''
 
       accounts.save(function (error) {
         if (error) {
