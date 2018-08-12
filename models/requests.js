@@ -83,7 +83,7 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/users/show?screen_name='+result.account.twitter.displayName,
+            url: 'https://api.twitter.com/1.1/users/show.json?screen_name='+result.account.twitter.displayName,
             method: 'GET'
         };
                 
@@ -99,22 +99,20 @@ module.exports = {
                 headers: oauth.toHeader(oauth.authorize(request_data, token))            
             }, function (err, res, body) {
                 
-                 if (err) return reject(err);
-                        
-                try {
-                    let twitter = JSON.parse(body)
-                    let account = result.account
-                    let reddit = result.reddit
-                    let twitch = result.twitch
-                    let result3 = {
+                if (err) return reject(err);
+                console.log(body)     
+               
+                let twitter = body
+                let account = result.account
+                let reddit = result.reddit
+                let twitch = result.twitch
+                let result3 = {
                     reddit,
                     twitch,
                     twitter
-                }
-                    resolve(result3)
-                } catch(e) {
-                    reject(e);
-                        } 
+                    }
+
+                resolve(result3)
             })    
         })
     },
