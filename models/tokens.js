@@ -268,4 +268,46 @@ module.exports = {
             return Promise.resolve(account)
         }
     },
+
+    redditRVK: function (account, user_agent) {
+        console.log(compareDT.expired(account.reddit.expires))
+        if (compareDT.expired(account.reddit.expires) != false) {
+            console.log('hitting function')
+            return new Promise((resolve, reject) => {
+                request({
+                    headers: {
+                        'Accept': 'application/x-www-form-urlencoded',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                    },
+                    url: 'https://www.reddit.com/api/v1/revoke_token',
+                    method: 'POST',
+                    form: 'token='+account.reddit.access_token+'&token_type_hint=bearer'
+                }, function (err, res, body) {
+                    let tknData = JSON.parse(body)
+                    if (tknData.access_token == '') {
+                        console.log('error')
+                        console.log(tknData)
+                        resolve(err)
+                    } else {
+                        console.log('true')
+                        tknData['refresh_token'] = account.reddit.refresh_token
+
+                        Accounts.updateAccountReddit(account.user, tknData).then(
+                            (account) => {
+                                console.log("hitting account")
+                                console.log(account)
+                                resolve(account)
+                            },
+                            (err) => {
+                                console.log("got rejected")
+                                reject(err)
+                            }
+                        )
+                    }
+                })
+            })
+        }else {
+            return Promise.resolve(account)
+        }
+    },
 } 
