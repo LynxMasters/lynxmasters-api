@@ -25,12 +25,11 @@ module.exports = {
                     account,
                     reddit
                 }
-                if(reddit == '') {
-                    console.log('error')
+                if(reddit.error) {
+                    console.log('error reddit profile')
                     console.log(reddit)
-                    reject(err)
+                    resolve(result)
                 } else {
-                    console.log('true')
                     resolve(result)
                 }
             })
@@ -60,12 +59,11 @@ module.exports = {
                 }
                 Accounts.updateAccountTwitch(result.account.user, twitch)
 
-                if (twitch == '') {
-                    console.log('error')
+                if (twitch.error) {
+                    console.log('error twitch profile')
                     console.log(twitch)
-                    reject(err)
+                    resolve(result2)
                 } else {
-                    console.log('true')
                     resolve(result2)
                 }
             })
@@ -102,20 +100,22 @@ module.exports = {
                 headers: oauth.toHeader(oauth.authorize(request_data, token))            
             }, function (err, res, body) {
                 
-                if (err) return reject(err);
-                console.log(body)     
-               
                 let twitter = JSON.parse(body)
                 let account = result.account
                 let reddit = result.reddit
                 let twitch = result.twitch
                 let result3 = {
-                    reddit,
-                    twitch,
-                    twitter
+                        reddit,
+                        twitch,
+                        twitter
                     }
-
-                resolve(result3)
+                if(twitter.error){
+                    console.log('error twitter profile')
+                    console.log(twitter)
+                    resolve(result3)
+                }else{  
+                    resolve(result3)
+                }
             })    
         })
     },
@@ -139,12 +139,11 @@ module.exports = {
                     account,
                     reddit
                 }
-                if(reddit == '') {
-                    console.log('error')
+                if(reddit.error) {
+                    console.log('error reddit feed')
                     console.log(reddit)
-                    reject(err)
+                    resolve(result)
                 } else {
-                    console.log('true')
                     resolve(result)
                 }
             })
@@ -172,15 +171,13 @@ module.exports = {
                 let result2 = {
                     account,
                     reddit,
-                    twitch
-                    
-                }
-                if (twitch == '') {
-                    console.log('error')
+                    twitch     
+                    }
+                if (twitch.error) {
+                    console.log('error twitch feed')
                     console.log(twitch)
-                    reject(err)
+                    resolve(result2)
                 } else {
-                    console.log('true')
                     resolve(result2)
                 }
             })
@@ -217,10 +214,8 @@ module.exports = {
                 headers: oauth.toHeader(oauth.authorize(request_data, token))            
             }, function (err, res, body) {
                 
-                if (err) return reject(err);     
-        
                 let twitter = JSON.parse(body)
-                let account = result.account
+                let account =result.account
                 let reddit = result.reddit
                 let twitch = result.twitch
                 let result3 = {
@@ -228,8 +223,14 @@ module.exports = {
                     twitch,
                     twitter
                     }
-
-                resolve(result3)
+                if(twitter.error){
+                    console.log('error twitch feed')
+                    console.log(twitch)
+                    resolve(result3)
+                }else{
+                    resolve(result3)  
+                }
+                
             })    
         })
     },

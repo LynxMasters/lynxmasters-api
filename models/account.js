@@ -66,7 +66,7 @@ function updateAccountReddit(user_id, data){
       accounts.reddit.id = data.id
       accounts.reddit.access_token = data.access_token
       accounts.reddit.refresh_token = data.refresh_token
-      accounts.reddit.expires = expires.valueOf()
+      accounts.reddit.expires = expires
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
 
@@ -92,7 +92,7 @@ function updateAccountTwitch(user_id, data){
             accounts.twitch.client_id = data._id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
-            accounts.twitch.expires = expires.valueOf()
+            accounts.twitch.expires = expires
             accounts.twitch.username = data.username
             accounts.twitch.logo = data.logo
 
@@ -136,11 +136,11 @@ function deleteAccountTwitter(user_id){
         reject(error)
       }
 
-      accounts.twitter.user_id = ''
-      accounts.twitter.oauth_token = ''
-      accounts.twitter.oauth_secret = ''
-      accounts.twitter.displayName = ''
-      accounts.twitter.logo = ''
+      accounts.twitter.user_id = null
+      accounts.twitter.oauth_token = null
+      accounts.twitter.oauth_secret = null
+      accounts.twitter.displayName = null
+      accounts.twitter.logo = null
 
       accounts.save(function (error) {
         if (error) {
@@ -159,11 +159,11 @@ function deleteAccountReddit(user_id){
         reject(error)
       }
 
-      accounts.reddit.user_id = ''
-      accounts.reddit.oauth_token = ''
-      accounts.reddit.oauth_secret = ''
-      accounts.reddit.displayName = ''
-      accounts.reddit.logo = ''
+      accounts.reddit.user_id = null
+      accounts.reddit.oauth_token = null
+      accounts.reddit.oauth_secret = null
+      accounts.reddit.displayName = null
+      accounts.reddit.logo = null
 
       accounts.save(function (error) {
         if (error) {
@@ -182,11 +182,11 @@ function deleteAccountTwitch(user_id){
         reject(error)
       }
 
-      accounts.twitch.user_id = ''
-      accounts.twitch.oauth_token = ''
-      accounts.twitch.oauth_secret = ''
-      accounts.twitch.displayName = ''
-      accounts.twitch.logo = ''
+      accounts.twitch.user_id = null
+      accounts.twitch.oauth_token = null
+      accounts.twitch.oauth_secret = null
+      accounts.twitch.displayName = null
+      accounts.twitch.logo = null
 
       accounts.save(function (error) {
         if (error) {
@@ -214,5 +214,8 @@ module.exports = {
  updateAccountReddit,
  updateAccountTwitch,
  updateAccountTwitter,
+ deleteAccountReddit,
+ deleteAccountTwitch,
+ deleteAccountTwitter,
  fetchOne
 }

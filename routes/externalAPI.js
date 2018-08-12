@@ -471,6 +471,7 @@ const OAuth = require('oauth-1.0a')
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
+            console.log(decryptedID)
                Accounts.deleteAccountTwitter(decryptedID)
                .then((result) =>{
                     res.send(result)
@@ -482,15 +483,14 @@ const OAuth = require('oauth-1.0a')
     });
 
     app.post(`${path}/unlink/reddit/`, (req, res) => {
-
+       
         jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
             if(error){
                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
             }
             else{
             let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountReddit(decryptedID)
-               .then((result) =>{
+               Accounts.deleteAccountReddit(decryptedID).then((result) =>{
                     res.send(result)
                },(err) => {
                     res.send(err)
