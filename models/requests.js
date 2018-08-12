@@ -161,8 +161,9 @@ module.exports = {
                     'Client_ID': 'b83413k7rg3fstv11tx5v7elta4t6l',
                     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'    
                 },
-                url: 'https://api.twitch.tv/kraken/users/'+result.account.twitch.client_id+'/follows/channels?oauth_token='+result.account.twitch.access_token,
+                url: 'https://api.twitch.tv/kraken/streams/followed?oauth_token='+result.account.twitch.access_token,
                 method: 'GET',
+
             }, function (err, res, body) {
                 console.log(body)
                 let twitch = JSON.parse(body)
