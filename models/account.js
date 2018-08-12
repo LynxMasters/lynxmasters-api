@@ -146,30 +146,32 @@ function deleteAccountTwitter(user_id){
         if (error) {
           reject(error)
         }
-          resolve(accounts)
+        resolve(accounts)
       })
     })
   })
 }
 
 function deleteAccountReddit(user_id){
+  console.log(user_id)
   return new Promise((resolve, reject) => {
     Accounts.findOne({user: user_id}, function (error, accounts) {
       if (error) {
         reject(error)
       }
 
-      accounts.reddit.user_id = null
-      accounts.reddit.oauth_token = null
-      accounts.reddit.oauth_secret = null
-      accounts.reddit.displayName = null
+      accounts.reddit.id = null
+      accounts.reddit.access_token = null
+      accounts.reddit.refresh_token = null
+      accounts.reddit.expires = null
+      accounts.reddit.username = null
       accounts.reddit.logo = null
 
       accounts.save(function (error) {
         if (error) {
           reject(error)
         }
-          resolve(accounts)
+        resolve(accounts)
       })
     })
   })
@@ -182,17 +184,17 @@ function deleteAccountTwitch(user_id){
         reject(error)
       }
 
-      accounts.twitch.user_id = null
-      accounts.twitch.oauth_token = null
-      accounts.twitch.oauth_secret = null
-      accounts.twitch.displayName = null
+      accounts.twitch.client_id  = null
+      accounts.twitch.access_token = null
+      accounts.twitch.refresh_token = null
+      accounts.twitch.expires = null
       accounts.twitch.logo = null
 
       accounts.save(function (error) {
         if (error) {
           reject(error)
         }
-          resolve(accounts)
+        resolve(accounts)
       })
     })
   })

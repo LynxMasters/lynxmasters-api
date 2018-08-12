@@ -130,6 +130,7 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditProfile(result)
                 })
                 .then(result => {
+                    this.reddit = result;
                     return Request.twitchProfile(result)
                 })
                 .then(result => {
@@ -155,6 +156,7 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditFeed(result)
                 })
                 .then(result => {
+                    this.reddit = result;
                     return Request.twitchFeed(result)
                 })
                 .then(result => {
@@ -180,6 +182,7 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditFriends(result)
                 })
                 .then(result => {
+                    this.reddit = result;
                     return Request.twitchFriends(result)
                 })
                 .then(result => {
@@ -463,57 +466,57 @@ const OAuth = require('oauth-1.0a')
         })
     });
 
-    app.post(`${path}/unlink/twitter/`, (req, res) => {
+  app.post(`${path}/unlink/twitter/`, (req, res) => {
 
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-            console.log(decryptedID)
-               Accounts.deleteAccountTwitter(decryptedID)
-               .then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountTwitter(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 
-    app.post(`${path}/unlink/reddit/`, (req, res) => {
-       
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountReddit(decryptedID).then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+  app.post(`${path}/unlink/reddit/`, (req, res) => {
 
-    app.post(`${path}/unlink/twitch/`, (req, res) => {
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountReddit(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountTwitch(decryptedID)
-               .then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+  app.post(`${path}/unlink/twitch/`, (req, res) => {
+
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountTwitch(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 }    
