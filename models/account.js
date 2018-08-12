@@ -159,7 +159,6 @@ function deleteAccountReddit(user_id){
       if (error) {
         reject(error)
       }
-      console.log(accounts)
 
       accounts.reddit.id = null
       accounts.reddit.access_token = null
@@ -185,15 +184,11 @@ function deleteAccountTwitch(user_id){
         reject(error)
       }
 
-      console.log(accounts)
-
       accounts.twitch.client_id  = null
       accounts.twitch.access_token = null
       accounts.twitch.refresh_token = null
       accounts.twitch.expires = null
       accounts.twitch.logo = null
-
-      console.log(accounts)
 
       accounts.save(function (error) {
         if (error) {
