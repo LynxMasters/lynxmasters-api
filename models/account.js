@@ -89,7 +89,7 @@ function updateAccountTwitch(user_id, data){
             let expires = new Date()
             expires.setSeconds(data.expires_in)
             console.log(expires)
-            accounts.twitch.client_id = data.id
+            accounts.twitch.client_id = data._id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
             accounts.twitch.expires = expires.valueOf()

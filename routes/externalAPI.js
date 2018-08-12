@@ -102,6 +102,7 @@ const OAuth = require('oauth-1.0a')
             }
             else{  
             let decryptedID = security.decrypt(decoded.id)
+            console.log(decryptedID)
                 Accounts.fetchOne(decryptedID)
                 .then(result => {
                     return Tokens.redditRFSH(result)
@@ -111,10 +112,7 @@ const OAuth = require('oauth-1.0a')
                 })
                 .then((result) => {
                     res.send(result)
-                })
-                .catch((err) => {
-                    res.send(err)
-                });   
+                })   
             }
         })
     });
@@ -132,11 +130,9 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditProfile(result)
                 })
                 .then(result => {
-                    this.reddit = result;
                     return Request.twitchProfile(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterProfile(result) 
                 })
                 .then((result) => {
@@ -159,11 +155,9 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditFeed(result)
                 })
                 .then(result => {
-                    this.reddit = result;
                     return Request.twitchFeed(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterFeed(result) 
                 })
                 .then((result) => {
@@ -186,11 +180,9 @@ const OAuth = require('oauth-1.0a')
                     return Request.redditFriends(result)
                 })
                 .then(result => {
-                    this.reddit = result;
                     return Request.twitchFriends(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterFriends(result) 
                 })
                 .then((result) => {
