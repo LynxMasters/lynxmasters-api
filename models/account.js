@@ -66,7 +66,7 @@ function updateAccountReddit(user_id, data){
       accounts.reddit.id = data.id
       accounts.reddit.access_token = data.access_token
       accounts.reddit.refresh_token = data.refresh_token
-      accounts.reddit.expires = expires.valueOf()
+      accounts.reddit.expires = expires
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
 
@@ -89,10 +89,10 @@ function updateAccountTwitch(user_id, data){
             let expires = new Date()
             expires.setSeconds(data.expires_in)
             console.log(expires)
-            accounts.twitch.client_id = data.id
+            accounts.twitch.client_id = data._id
             accounts.twitch.access_token = data.access_token
             accounts.twitch.refresh_token = data.refresh_token
-            accounts.twitch.expires = expires.valueOf()
+            accounts.twitch.expires = expires
             accounts.twitch.username = data.username
             accounts.twitch.logo = data.logo
 
@@ -212,12 +212,12 @@ function fetchOne(user_id){
 }
 
 module.exports = {
-  addAccount,
-  updateAccountReddit,
-  updateAccountTwitch,
-  updateAccountTwitter,
-  fetchOne,
-  deleteAccountTwitch,
-  deleteAccountReddit,
-  deleteAccountTwitter
+ addAccount,
+ updateAccountReddit,
+ updateAccountTwitch,
+ updateAccountTwitter,
+ deleteAccountReddit,
+ deleteAccountTwitch,
+ deleteAccountTwitter,
+ fetchOne
 }

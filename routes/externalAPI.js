@@ -102,19 +102,17 @@ const OAuth = require('oauth-1.0a')
             }
             else{  
             let decryptedID = security.decrypt(decoded.id)
+            console.log(decryptedID)
                 Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Tokens.redditRFSH(result, req.headers['User-Agent'])
+                    return Tokens.redditRFSH(result)
                 })
                 .then(result => {
-                    return Tokens.twitchRFSH(result, req.headers['User-Agent']) 
+                    return Tokens.twitchRFSH(result) 
                 })
                 .then((result) => {
                     res.send(result)
-                })
-                .catch((err) => {
-                    res.send(err)
-                });   
+                })   
             }
         })
     });
@@ -136,7 +134,6 @@ const OAuth = require('oauth-1.0a')
                     return Request.twitchProfile(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterProfile(result) 
                 })
                 .then((result) => {
@@ -163,7 +160,6 @@ const OAuth = require('oauth-1.0a')
                     return Request.twitchFeed(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterFeed(result) 
                 })
                 .then((result) => {
@@ -190,7 +186,6 @@ const OAuth = require('oauth-1.0a')
                     return Request.twitchFriends(result)
                 })
                 .then(result => {
-                    this.twitch = result
                     return Request.twitterFriends(result) 
                 })
                 .then((result) => {
