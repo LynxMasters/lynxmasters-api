@@ -129,11 +129,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditProfile(result, )
+                    return Request.redditProfile(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchProfile(result, )
+                    return Request.twitchProfile(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -156,11 +156,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditFeed(result, )
+                    return Request.redditFeed(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchFeed(result, )
+                    return Request.twitchFeed(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -183,11 +183,11 @@ const OAuth = require('oauth-1.0a')
             let decryptedID = security.decrypt(decoded.id)
             Accounts.fetchOne(decryptedID)
                 .then(result => {
-                    return Request.redditFriends(result, )
+                    return Request.redditFriends(result)
                 })
                 .then(result => {
                     this.reddit = result;
-                    return Request.twitchFriends(result, )
+                    return Request.twitchFriends(result)
                 })
                 .then(result => {
                     this.twitch = result
@@ -471,57 +471,57 @@ const OAuth = require('oauth-1.0a')
         })
     });
 
-    app.post(`${path}/unlink/twitter/`, (req, res) => {
+  app.post(`${path}/unlink/twitter/`, (req, res) => {
 
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountTwitter(decoded.id)
-               .then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountTwitter(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 
-    app.post(`${path}/unlink/reddit/`, (req, res) => {
+  app.post(`${path}/unlink/reddit/`, (req, res) => {
 
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountReddit(decoded.id)
-               .then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountReddit(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 
-    app.post(`${path}/unlink/twitch/`, (req, res) => {
+  app.post(`${path}/unlink/twitch/`, (req, res) => {
 
-        jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function(error, decoded){
-            if(error){
-                res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-            }
-            else{
-            let decryptedID = security.decrypt(decoded.id)
-               Accounts.deleteAccountTwitch(decoded.id)
-               .then((result) =>{
-                    res.send(result)
-               },(err) => {
-                    res.send(err)
-               }) 
-            }
-        })
-    });
+    jwt.verify(req.body.headers.Authorization, configAuth.jwt.secret, function (error, decoded) {
+      if (error) {
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'})
+      }
+      else {
+        let decryptedID = security.decrypt(decoded.id)
+        Accounts.deleteAccountTwitch(decryptedID)
+          .then((result) => {
+            res.send(result)
+          }, (err) => {
+            res.send(err)
+          })
+      }
+    })
+  });
 }    
