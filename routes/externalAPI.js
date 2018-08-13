@@ -77,7 +77,7 @@ const OAuth = require('oauth-1.0a')
     		console.log(decryptedID)
     		req.session.token = jwt_token;
 			Tokens.twitterReq(function(err, data){
-        	res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token='+data)
+        	res.redirect('https://api.twitter.com/oauth/authenticate?force_login=true&oauth_token='+data)
         	})
 		})
 	});
