@@ -32,6 +32,7 @@ const OAuth = require('oauth-1.0a')
       if (req.query.state == req.session.state) {
         if (req.query.code) {
           Tokens.reddit(req.query.code, decoded.id)
+          req.session.token.destroy
           res.redirect('http://localhost:8080/LinkAccounts')
         }
       }
@@ -60,6 +61,7 @@ const OAuth = require('oauth-1.0a')
       if (req.query.state == req.session.state) {
         if (req.query.code) {
           Tokens.twitch(req.query.code, decoded.id)
+          req.session.token.destroy
           res.redirect('http://localhost:8080/LinkAccounts')
         }
       }
@@ -88,6 +90,7 @@ const OAuth = require('oauth-1.0a')
         message: 'Failed to authenticate token.'
       })
       Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decoded.id)
+      req.session.token.destroy
       res.redirect('http://localhost:8080/LinkAccounts')
     })
   });
