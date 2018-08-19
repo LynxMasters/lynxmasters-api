@@ -93,6 +93,24 @@ module.exports = (app) => {
     )
   })
 
+  app.post(`${path}/verify/jwt`, (req, res) => {
+    let decryptedToken = security.decrypt(req.body.headers.Authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        res.status(200).send({
+          auth: true,
+          message: 'success'
+        })
+      }
+    })
+  })  
+  
+
   // Avatar upload
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
