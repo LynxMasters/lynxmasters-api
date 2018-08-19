@@ -231,6 +231,22 @@ function fetchOne(id) {
   })
 }
 
+function fetchAll() {
+  return new Promise((resolve, reject) => {
+    Users.find({}, Object.keys(schema).join(" "), function (error, users) {
+      if (error) {
+        reject(error)
+      }
+      /**
+       * TODO .....
+       * https://lodash.com/docs/4.17.10#omitBy
+       *  need to remove password and email tokens from each user object
+       * */
+      resolve(users)
+    }).sort({_id: -1})
+  })
+}
+
 function updateOne(id, userObj) {
   return new Promise((resolve, reject) => {
     Users.findById(id, Object.keys(schema).join(" "), function (error, user) {
@@ -280,6 +296,7 @@ function sendEmailVerification(user) {
 module.exports = {
   addUser,
   fetchOne,
+  fetchAll,
   updateOne,
   removeOne,
   loginUser,

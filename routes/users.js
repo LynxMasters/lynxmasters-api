@@ -19,22 +19,23 @@ module.exports = (app) => {
     })
   })
 
-  // Fetch single user for testing API/Server works
-  app.get(`${path}/users`, (req, res) => {
-    res.send(
-      [{
-        firstName: "Ian",
-        lastName: "Arsenault",
-        dateCreated: new Date()
-      }]
-    )
-  })
-
   // Fetch single user
   app.get(`${path}/users/:id`, (req, res) => {
     Users.fetchOne(req.params.id).then(
       (user) => {
         res.send(user)
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  })
+
+  // Fetch all users
+  app.get(`${path}/users`, (req, res) => {
+    Users.fetchAll().then(
+      (users) => {
+        res.send({users: users})
       },
       (err) => {
         console.error(err)
