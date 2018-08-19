@@ -93,7 +93,7 @@ module.exports = (app) => {
     )
   })
 
-  app.post(`${path}/verify/jwt`, (req, res) => {
+  app.post(`${path}/verify/token`, (req, res) => {
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
