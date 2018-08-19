@@ -129,7 +129,7 @@ module.exports = {
                     'Authorization': 'bearer '+account.reddit.access_token,
                     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                 },
-                url: 'https://oauth.reddit.com/hot?show=all',
+                url: 'https://oauth.reddit.com/hot?show=all&limit=100',
                 method: 'GET',
             }, function (err, res, body) {
                 console.log(body)
@@ -197,7 +197,7 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json',
+            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=100',
             method: 'GET'
         };
                 
