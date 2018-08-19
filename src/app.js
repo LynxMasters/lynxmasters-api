@@ -14,7 +14,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors())
 
-mongoose.connect('mongodb://54.165.68.141:27017/lynxmasters', { useNewUrlParser: true })
+//mongoose.connect('mongodb://localhost:27017/lynxmasters', { useNewUrlParser: true })
+mongoose.connect('mongodb://dev:k5pc94tzqv24@54.165.68.141:27017/lynxmasters', { useNewUrlParser: true })
 let db = mongoose.connection
 db.on("error", console.error.bind(console, "connection error"))
 db.once("open", function(callback){
