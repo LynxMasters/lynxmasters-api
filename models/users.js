@@ -174,24 +174,21 @@ function loginUser(req) {
               err.status = 401
               reject(err)
             } else {
-              let cleanUser = user.toObject()
-              delete cleanUser.password
-              delete cleanUser.__v
-              delete cleanUser.emailConfirmationToken
-              cleanUser.password = ''
               let userID = user._id.toString()
               let encryptedID = security.encrypt(userID)
               console.log(encryptedID)
               let token = jwt.sign({ id: encryptedID }, config.jwt.secret, {
                 expiresIn: 86400 // expires in 24 hours
               })
-              console.log(token)
-              let loginCreds = {
-                token: token,
-                linkedAccounts: user.linkedAccounts,
-                name: user.firstName + ' ' + user.lastName
-              }
-              resolve(loginCreds)
+              Accounts.fetchOne(user.id)
+                .then(accounts => {
+                  let loginCreds = {
+                    token: token,
+                    linkedAccounts: accounts,
+                    name: user.firstName + ' ' + user.lastName
+                  }
+                  resolve(loginCreds)
+              })
             }
           })
         }
