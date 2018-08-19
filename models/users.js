@@ -174,16 +174,15 @@ function loginUser(req) {
               err.status = 401
               reject(err)
             } else {
-              let userID = user._id.toString()
-              let encryptedID = security.encrypt(userID)
-              console.log(encryptedID)
-              let token = jwt.sign({ id: encryptedID }, config.jwt.secret, {
+              let userID = user._id.toString()  
+              let token = jwt.sign({ id: userID }, config.jwt.secret, {
                 expiresIn: 86400 // expires in 24 hours
               })
+              let encryptedToken = security.encrypt(token)
               Accounts.fetchOne(user.id)
                 .then(accounts => {
                   let loginCreds = {
-                    token: token,
+                    token: encryptedToken,
                     linkedAccounts: accounts,
                     name: user.firstName + ' ' + user.lastName
                   }
