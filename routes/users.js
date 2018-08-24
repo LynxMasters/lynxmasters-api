@@ -1,7 +1,9 @@
 let Users = require("../models/users")
 let multer  = require('multer')
 let path = '/api/v1';
-
+const jwt = require('jsonwebtoken');
+let security = require('../utils/encryption-decryption')
+const configAuth = require('../config/auth')
 
 
 module.exports = (app) => {
@@ -29,6 +31,28 @@ module.exports = (app) => {
         console.error(err)
       }
     )
+  })
+
+  app.get(`${path}/user/me`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    console.log(decryptedToken)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Users.fetchOne(decoded.id).then(
+          (user) => {
+            res.send(user)
+          },
+          (err) => {
+            console.error(err)
+          }
+        )
+      }
+    })  
   })
 
   // Fetch all users

@@ -95,9 +95,8 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.post(`${path}/accounts/`, (req, res) => {
-
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
+  app.get(`${path}/accounts/`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
@@ -119,9 +118,8 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.post(`${path}/profiles/`, (req, res) => {
-
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
+  app.get(`${path}/profiles/`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
@@ -147,9 +145,9 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.post(`${path}/feeds/`, (req, res) => {
+  app.get(`${path}/feeds/`, (req, res) => {
 
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
@@ -175,9 +173,9 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.post(`${path}/friends/`, (req, res) => {
+  app.get(`${path}/friends/`, (req, res) => {
 
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
         res.status(500).send({

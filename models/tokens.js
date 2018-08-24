@@ -185,9 +185,7 @@ module.exports = {
     },
     
     redditRFSH: function (account, user_agent) {
-        console.log(compareDT.expired(account.reddit.expires))
         if (compareDT.expired(account.reddit.expires) != false) {
-            console.log('hitting function')
             return new Promise((resolve, reject) => {
                 request({
                     headers: {
@@ -230,7 +228,6 @@ module.exports = {
     twitchRFSH: function (account, user_agent) {
         if(compareDT.expired(account.twitch.expires) != false) {
             return new Promise((resolve, reject) => {
-                console.log('hitting function')
                 request({
                     headers: {
                         'Accept': 'application/x-www-form-urlencoded',

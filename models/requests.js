@@ -9,7 +9,6 @@ module.exports = {
 
 //*********************PROFILES**************************
     redditProfile: function (account, user_agent) {
-        console.log('RedditProfile')
         return new Promise((resolve, reject) => {
             request({
                 headers: {
@@ -27,7 +26,6 @@ module.exports = {
                 }
                 if(reddit.error) {
                     console.log('error reddit profile')
-                    console.log(reddit)
                     resolve(result)
                 } else {
                     resolve(result)
@@ -37,8 +35,6 @@ module.exports = {
     },
 
     twitchProfile: function (result, user_agent) {
-        console.log('TwitchProfile')
-        console.log(result)
         return new Promise((resolve, reject) => {
             request({
                 headers: {
@@ -60,7 +56,6 @@ module.exports = {
 
                 if (twitch.error) {
                     console.log('error twitch profile')
-                    console.log(twitch)
                     resolve(result2)
                 } else {
                     resolve(result2)
@@ -70,7 +65,6 @@ module.exports = {
     },
 
     twitterProfile: function(result){
-        console.log(result)
         const oauth = OAuth({
             consumer: {
                 key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
@@ -110,7 +104,6 @@ module.exports = {
                     }
                 if(twitter.error){
                     console.log('error twitter profile')
-                    console.log(twitter)
                     resolve(result3)
                 }else{  
                     resolve(result3)
@@ -121,7 +114,6 @@ module.exports = {
 
 //*********************FEEDS**************************
     redditFeed: function (account, user_agent) {
-        console.log('RedditProfile')
         return new Promise((resolve, reject) => {
             request({
                 headers: {
@@ -132,7 +124,6 @@ module.exports = {
                 url: 'https://oauth.reddit.com/hot?show=all&limit=100',
                 method: 'GET',
             }, function (err, res, body) {
-                console.log(body)
                 let reddit = JSON.parse(body)
                 var result = {
                     account,
@@ -140,7 +131,6 @@ module.exports = {
                 }
                 if(reddit.error) {
                     console.log('error reddit feed')
-                    console.log(reddit)
                     resolve(result)
                 } else {
                     resolve(result)
@@ -150,8 +140,6 @@ module.exports = {
     },
 
     twitchFeed: function (result, user_agent) {
-        console.log('TwitchProfile')
-        console.log(result)
         return new Promise((resolve, reject) => {
             request({
                 headers: {
@@ -163,7 +151,6 @@ module.exports = {
                 method: 'GET',
 
             }, function (err, res, body) {
-                console.log(body)
                 let twitch = JSON.parse(body)
                 let account = result.account
                 let reddit = result.reddit
@@ -174,7 +161,6 @@ module.exports = {
                     }
                 if (twitch.error) {
                     console.log('error twitch feed')
-                    console.log(twitch)
                     resolve(result2)
                 } else {
                     resolve(result2)
@@ -184,7 +170,6 @@ module.exports = {
     },
 
     twitterFeed: function(result){
-        console.log(result)
         const oauth = OAuth({
             consumer: {
                 key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
@@ -224,7 +209,6 @@ module.exports = {
                     }
                 if(twitter.error){
                     console.log('error twitch feed')
-                    console.log(twitch)
                     resolve(result3)
                 }else{
                     resolve(result3)  
