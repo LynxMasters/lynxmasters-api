@@ -37,6 +37,7 @@ module.exports = (app) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
     console.log(decryptedToken)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+        console.log(error)
       if (error) {
         res.status(500).send({
           auth: false,
@@ -104,6 +105,35 @@ module.exports = (app) => {
       return error
     })
   })
+
+  // Update user account info
+    app.put(`${path}/user/account`, (req, res) => {
+        let decryptedToken = security.decrypt(req.headers.authorization)
+        console.log(decryptedToken)
+        jwt.verify(decryptedToken, configAuth.jwt.secret, function (error, decoded) {
+            if (error) {
+                res.status(500).send({
+                    auth: false,
+                    message: 'Failed to authenticate token.'
+                })
+                console.log(error)
+            } else {
+                //console.log('req params id ' + req.params.id)
+                //console.log('req booooody : ' + JSON.stringify(req.body))
+                Users.updateOne(req.body._id, req.body).then(
+                    (success) => {
+                        res.send({success: true})
+                        console.log('success')
+                    },
+                    (err) => {
+                        res.send(err)
+                    }
+                ).catch(function (error) {
+                    return error
+                })
+            }
+        })
+    })
 
   // Delete a user
   app.delete(`${path}/users/:id`, (req, res) => {
