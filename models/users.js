@@ -251,15 +251,18 @@ function updateOne(id, userObj) {
   return new Promise((resolve, reject) => {
     Users.findById(id, Object.keys(schema).join(" "), function (error, user) {
       if (error) {
-          console.log('error     :  ' + error)
         reject(error)
       }
 
-      console.log('passed in obj ' + JSON.stringify(userObj))
-      console.log('das user ' + user)
       user.firstName = userObj.firstName
       user.lastName = userObj.lastName
       user.address = userObj.address
+      user.city = userObj.city
+      user.state = userObj.state
+      user.zipCode = userObj.zipCode
+      user.country = userObj.country
+
+
       user.password = userObj.password
       user.active = userObj.active
 
