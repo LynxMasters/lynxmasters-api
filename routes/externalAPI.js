@@ -114,6 +114,9 @@ const OAuth = require('oauth-1.0a')
           .then((result) => {
             res.send(result)
           })
+          .catch(error =>{
+            console.log(error)
+          })
       }
     })
   });
@@ -140,6 +143,9 @@ const OAuth = require('oauth-1.0a')
           })
           .then((result) => {
             res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
           })
       }
     })
@@ -169,6 +175,9 @@ const OAuth = require('oauth-1.0a')
           .then((result) => {
             res.send(result)
           })
+          .catch(error =>{
+            console.log(error)
+          })
       }
     })
   });
@@ -196,6 +205,9 @@ const OAuth = require('oauth-1.0a')
           })
           .then((result) => {
             res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
           })
       }
     })
