@@ -20,10 +20,11 @@ module.exports = {
                 method: 'GET',
             }, function (err, res, body) {
                 let reddit = JSON.parse(body)
-                var result = {
+                    var result = {
                     account,
                     reddit
-                }
+                    }
+               
                 if(reddit.error) {
                     console.log('error reddit profile')
                     resolve(result)
