@@ -12,7 +12,8 @@ const schema = {
         refresh_token:{ type: String, default: null},
         expires      :{ type: String, default: null},
         username     :{ type: String, default: null},
-        logo         :{ type: String, default: null}
+        logo         :{ type: String, default: null},
+        linked       :{ type: Boolean, default: false}
         
     },
     twitter          : {
@@ -20,7 +21,8 @@ const schema = {
         oauth_token  :{ type: String, default: null},
         oauth_secret :{ type: String, default: null},
         displayName  :{ type: String, default: null},
-        logo         :{ type: String, default: null}
+        logo         :{ type: String, default: null},
+        linked       :{ type: Boolean, default: false}
           
     },
     reddit           : {
@@ -29,7 +31,8 @@ const schema = {
         refresh_token:{ type: String, default: null},
         expires      :{ type: String, default: null},
         username     :{ type: String, default: null},
-        logo         :{ type: String, default: null}
+        logo         :{ type: String, default: null},
+        linked       :{ type: Boolean, default: false}
     }
 }
 
@@ -69,6 +72,7 @@ function updateAccountReddit(user_id, data){
       accounts.reddit.expires = expires
       accounts.reddit.username = data.username
       accounts.reddit.logo = data.logo
+      accounts.reddit.linked = true
 
       accounts.save(function (error, accounts) {
         if (error) {
@@ -95,6 +99,7 @@ function updateAccountTwitch(user_id, data){
             accounts.twitch.expires = expires
             accounts.twitch.username = data.username
             accounts.twitch.logo = data.logo
+            accounts.twitch.linked = true
 
             accounts.save(function (error) {
             if (error) {
@@ -118,6 +123,7 @@ function updateAccountTwitter(user_id, data){
       accounts.twitter.oauth_secret = data.oauth_token_secret
       accounts.twitter.displayName = data.screen_name
       accounts.twitter.logo = data.logo
+      accounts.twitter.linked = true
 
       accounts.save(function (error) {
         if (error) {
@@ -141,6 +147,7 @@ function deleteAccountTwitter(user_id){
       accounts.twitter.oauth_secret = null
       accounts.twitter.displayName = null
       accounts.twitter.logo = null
+      accounts.twitter.linked = false
 
       accounts.save(function (error) {
         if (error) {
@@ -166,6 +173,7 @@ function deleteAccountReddit(user_id){
       accounts.reddit.expires = null
       accounts.reddit.username = null
       accounts.reddit.logo = null
+      accounts.reddit.linked = false
 
       accounts.save(function (error) {
         if (error) {
@@ -189,6 +197,7 @@ function deleteAccountTwitch(user_id){
       accounts.twitch.refresh_token = null
       accounts.twitch.expires = null
       accounts.twitch.logo = null
+      accounts.twitch.linked = false
 
       accounts.save(function (error) {
         if (error) {
