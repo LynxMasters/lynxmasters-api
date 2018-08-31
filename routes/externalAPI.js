@@ -135,7 +135,6 @@ const OAuth = require('oauth-1.0a')
             return Request.redditProfile(result)
           })
           .then(result => {
-            this.reddit = result;
             return Request.twitchProfile(result)
           })
           .then(result => {
@@ -151,8 +150,76 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get(`${path}/feeds/`, (req, res) => {
+    app.get(`${path}/profiles/reddit`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.redditProfile(result)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
 
+  app.get(`${path}/profiles/twitch`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitchProfile(result)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });  
+
+  app.get(`${path}/profiles/twitter`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterProfile(result)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  }); 
+
+  app.get(`${path}/feeds/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
@@ -165,12 +232,28 @@ const OAuth = require('oauth-1.0a')
           .then(result => {
             return Request.redditFeed(result)
           })
-          .then(result => {
-            this.reddit = result;
-            return Request.twitchFeed(result)
+          .then((result) => {
+            res.send(result)
           })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.get(`${path}/feeds/twitch`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.twitterFeed(result)
+            return Request.twitchFeed(result)
           })
           .then((result) => {
             res.send(result)
@@ -182,8 +265,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get(`${path}/friends/`, (req, res) => {
-
+  app.get(`${path}/feeds/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
       if (error) {
@@ -194,14 +276,7 @@ const OAuth = require('oauth-1.0a')
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.redditFriends(result)
-          })
-          .then(result => {
-            this.reddit = result;
-            return Request.twitchFriends(result)
-          })
-          .then(result => {
-            return Request.twitterFriends(result)
+            return Request.twitterFeed(result)
           })
           .then((result) => {
             res.send(result)
