@@ -221,6 +221,35 @@ module.exports = {
         })
     },
 
+    redditComments: function (account, id36) {
+        return new Promise((resolve, reject) => {
+            if(account.reddit.linked){
+                request({
+                    headers: {
+                        'Accept': 'application/x-www-form-urlencoded',
+                        'Authorization': 'bearer '+account.reddit.access_token,
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                    },
+                    url: 'https://oauth.reddit.com/comments/'+id36,
+                    method: 'GET',
+                }, function (err, res, body) {
+                    let reddit = JSON.parse(body)
+                    if(reddit.error) {
+                        console.log('error reddit feed')
+                        resolve(reddit)
+                    } else {
+                        resolve(reddit)
+                    }
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }
+        })   
+    },
+
 //*********************Friends**************************
     redditFriends: function (account, user_agent) {
         console.log('RedditProfile')
