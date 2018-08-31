@@ -134,8 +134,11 @@ module.exports = {
                         resolve(reddit)
                     }
                 })
-            } else{
-                resolve('not linked')
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
             }
         })   
     },
