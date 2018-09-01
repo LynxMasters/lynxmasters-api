@@ -288,6 +288,30 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
+  app.get(`${path}/comments/reddit`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.redditComments(result, req.query.id36)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
   app.post(`${path}/unlink/twitter/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
