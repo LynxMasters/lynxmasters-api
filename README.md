@@ -78,33 +78,6 @@ npm run dev:pc
 ```
 
 
-## API Testing
-
-To test out the API and various calls use a REST Client ([Insomnia](https://insomnia.rest/) or [Postman](https://www.getpostman.com/))
-
-1. Open up your REST Client of choice
-2. Make sure MongoDB and the server is running
-```sh
-# starts mongodb
-mongod
-```
-```sh
-cd path/to/project/root
-
-# install dependencies
-npm install
-
-# run server at localhost:8081
-npm run dev
-```
-3. Test the API by making various calls
-
-Example: `http://localhost:8081/api/v1/users`
-
-4. Should return the following
-
-![Alt Text](https://i.imgur.com/nPafL4e.gif)
-
 ## Testing SendGrid Locally
 1. In server directory, create a new directory called `config`
 ```sh
@@ -126,13 +99,7 @@ SENDGRID_API_KEY='YOUR_SENDGRID_API_KEY_HERE'
 NO_REPLY_EMAIL='do_not_reply@example.com'
 SUBJECT='Custome subject....'
 ```
-4. Uncomment line 92 in `server/models/users.js` like so..
-```js
-} else {
-    // Send email verification
-    sendEmailVerification(user)
-```
-5. Sendgrid will now work
+4. Sendgrid will now work
 
 ## Contributors
 
