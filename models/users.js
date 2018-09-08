@@ -295,7 +295,7 @@ function sendEmailVerification(user) {
     to: user.email,
     from:  process.env.NO_REPLY_EMAIL,
     subject: process.env.SUBJECT,
-    html: '<p>Hello, thank you for signing up with <strong>Lynxmasters</strong>!<br>Please click the following link to verify your email.<br></p><a href="http://localhost:8080/verification?id=' + user._id +'&email_id=' + user.emailConfirmationToken + '" target="_blank">Verify your email for Lynxmasters</a>',
+    html: '<p>Hello, thank you for signing up with <strong>Lynxmasters</strong>!<br>Please click the following link to verify your email.<br></p><a href="https://lynxmasters.com/verification?id=' + user._id +'&email_id=' + user.emailConfirmationToken + '" target="_blank">Verify your email for Lynxmasters</a>',
   };
   sgMail.send(msg)
 }
