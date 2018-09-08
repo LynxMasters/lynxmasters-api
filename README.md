@@ -126,13 +126,7 @@ SENDGRID_API_KEY='YOUR_SENDGRID_API_KEY_HERE'
 NO_REPLY_EMAIL='do_not_reply@example.com'
 SUBJECT='Custome subject....'
 ```
-4. Uncomment line 92 in `server/models/users.js` like so..
-```js
-} else {
-    // Send email verification
-    sendEmailVerification(user)
-```
-5. Sendgrid will now work
+4. Sendgrid will now work
 
 ## Contributors
 
