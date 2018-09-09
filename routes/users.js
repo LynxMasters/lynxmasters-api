@@ -182,6 +182,7 @@ module.exports = (app) => {
 
   let upload = multer({ storage: storage })
   app.post(`${path}/uploads`, upload.single('image'), (req, res) => {
+    console.log(process.env.NODE_ENV)
     return res.json({ message: 'success', filename: req.file.filename})
   })
 
