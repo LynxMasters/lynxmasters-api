@@ -261,6 +261,7 @@ function updateOne(id, userObj) {
       user.state = userObj.state
       user.zipCode = userObj.zipCode
       user.country = userObj.country
+      user.email = userObj.email
 
 
       user.password = userObj.password
