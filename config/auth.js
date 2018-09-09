@@ -24,7 +24,7 @@ module.exports = {
     'twitter' : {
         'consumerKey'        : 'm9y0YNJfgwJafm5qKeMhu7xgC',
         'consumerSecret'     : 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g',
-        'callbackURL'        : 'http://lynxmasters.com/api/v1/auth/twitter/callback'
+        'callbackURL'        : 'https://lynxmasters.com/api/v1/auth/twitter/callback'
         // 'callbackURL'        : 'http://localhost:8081/auth/twitter/callback'
     },
     'jwt'     :{
