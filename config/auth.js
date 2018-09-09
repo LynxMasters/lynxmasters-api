@@ -7,7 +7,7 @@ module.exports = {
         'clientID'         : 'h9NwYUZGn65RJw',
         'clientSecret'     : 'vOGJ1itvyfWHE_ZxiA5kYKGWl-Q',
         'callbackURL'      : 'https://lynxmasters.com/api/v1/auth/reddit/callback',
-        'authorizeURL': 'https://www.reddit.com/api/v1/authorize?client_id=h9NwYUZGn65RJw&response_type=code&redirect_uri=http://lynxmasters.com/api/v1/auth/reddit/callback&duration=permanent&scope=identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote&state='
+        'authorizeURL': 'https://www.reddit.com/api/v1/authorize?client_id=h9NwYUZGn65RJw&response_type=code&redirect_uri=https://lynxmasters.com/api/v1/auth/reddit/callback&duration=permanent&scope=identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote&state='
         // 'callbackURL'      : 'http://localhost:8081/auth/reddit/callback',
        
     },
