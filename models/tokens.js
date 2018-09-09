@@ -11,7 +11,7 @@ module.exports = {
     reddit: function (code, userId, err) {
 
         // let data = 'grant_type=authorization_code&code=' + code + '&redirect_uri=http://localhost:8081/auth/reddit/callback&state='
-        let data = 'grant_type=authorization_code&code=' + code + '&redirect_uri=http://lynxmasters.com/auth/reddit/callback&state='
+        let data = 'grant_type=authorization_code&code=' + code + '&redirect_uri=http://lynxmasters.com/api/v1/auth/reddit/callback&state='
         request({
 
             headers: {
@@ -52,7 +52,7 @@ module.exports = {
     twitch: function (code, userId, err) {
 
         // let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code=' + code + '&grant_type=authorization_code&redirect_uri=http://localhost:8081/auth/twitch/callback'
-        let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code=' + code + '&grant_type=authorization_code&redirect_uri=http://lynxmasters.com/auth/twitch/callback'
+        let data = 'client_id=b83413k7rg3fstv11tx5v7elta4t6l&client_secret=yj9xcmqdneuaz8kjwqsv6er1p0kxeq&code=' + code + '&grant_type=authorization_code&redirect_uri=http://lynxmasters.com/api/v1/auth/twitch/callback'
         request({
 
             headers: {
