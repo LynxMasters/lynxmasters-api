@@ -10,7 +10,7 @@ const Accounts = require('../models/account')
 const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
 
-  app.get('/auth/reddit', function(req, res) {
+  app.get(`${path}/auth/reddit`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
@@ -23,7 +23,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get('/auth/reddit/callback', function(req, res) {
+  app.get(`${path}/auth/reddit/callback`, function(req, res) {
     jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
@@ -40,7 +40,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get('/auth/twitch', function(req, res) {
+  app.get(`${path}/auth/twitch`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
@@ -53,7 +53,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get('/auth/twitch/callback', function(req, res) {
+  app.get(`${path}/auth/twitch/callback`, function(req, res) {
     jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
@@ -70,7 +70,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get('/auth/twitter', function(req, res) {
+  app.get(`${path}/auth/twitter`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
     jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
@@ -84,7 +84,7 @@ const OAuth = require('oauth-1.0a')
     })
   });
 
-  app.get('/auth/twitter/callback', function(req, res) {
+  app.get(`${path}/auth/twitter/callback`, function(req, res) {
     console.log(req.session.token);
     jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
       if (err) return res.status(500).send({
