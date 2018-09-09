@@ -33,7 +33,8 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.reddit(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect('http://lynxmasters.com/LinkAccounts')
+          // res.redirect('http://localhost:8080/LinkAccounts')
         }
       }
     })
@@ -62,7 +63,8 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.twitch(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect('http://lynxmasters.com/LinkAccounts')
+          // res.redirect('http://localhost:8080/LinkAccounts')
         }
       }
     })
@@ -91,7 +93,8 @@ const OAuth = require('oauth-1.0a')
       })
       Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decoded.id)
       req.session.token.destroy
-      res.redirect('http://localhost:8080/LinkAccounts')
+      res.redirect('http://lynxmasters.com/LinkAccounts')
+      // res.redirect('http://localhost:8080/LinkAccounts')
     })
   });
 
@@ -194,7 +197,7 @@ const OAuth = require('oauth-1.0a')
           })
       }
     })
-  });  
+  });
 
   app.get(`${path}/profiles/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
@@ -217,7 +220,7 @@ const OAuth = require('oauth-1.0a')
           })
       }
     })
-  }); 
+  });
 
   app.get(`${path}/feeds/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
@@ -375,7 +378,7 @@ const OAuth = require('oauth-1.0a')
 }
 //REFERENCE ONLY
 // app.post(`${path}/redditGET/`, (req, res) => {
-        
+
 //         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
@@ -385,7 +388,7 @@ const OAuth = require('oauth-1.0a')
 //                 let decryptedID = security.decrypt(decoded.id)
 //                 return new Promise(function(resolve, reject){
 //                     request({
-                
+
 //                         headers: {
 //                             'Accept': 'application/x-www-form-urlencoded',
 //                             'Authorization': 'bearer '+req.body.data.access_token,
@@ -399,7 +402,7 @@ const OAuth = require('oauth-1.0a')
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }           
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -407,13 +410,13 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
 //     });
-    
+
 //     app.post(`${path}/twitchGET/`, (req, res) => {
-        
+
 //         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
@@ -423,11 +426,11 @@ const OAuth = require('oauth-1.0a')
 //                 let decryptedID = security.decrypt(decoded.id)
 //                 return new Promise(function(resolve, reject){
 //                     request({
-                
+
 //                         headers: {
 //                             'Accept': 'application/x-www-form-urlencoded',
 //                             'Authorization': 'Oauth '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent,    
+//                             'User-Agent': req.body.data.user_agent,
 //                         },
 //                         url: 'https://api.twitch.tv/kraken'+req.body.data.endpoint,
 //                         method: 'GET',
@@ -437,7 +440,7 @@ const OAuth = require('oauth-1.0a')
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }              
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -445,19 +448,19 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
 //     });
-        
+
 //     app.post(`${path}/twitterGET/`, (req, res) => {
-       
+
 //         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
 //             else{
-                
+
 //                 let decryptedID = security.decrypt(decoded.id)
 //                 const oauth = OAuth({
 //                     consumer: {
@@ -469,31 +472,31 @@ const OAuth = require('oauth-1.0a')
 //                         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
 //                     }
 //                 });
- 
+
 //                 const request_data = {
 //                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
 //                     method: 'GET'
 //                 };
-                
+
 //                 const token = {
 //                     key: req.body.data.oauth_token,
 //                     secret: req.body.data.oauth_secret
-//                 }; 
-                
+//                 };
+
 //                 return new Promise(function(resolve, reject){
 //                     request({
 //                         method: request_data.method,
-//                         url: request_data.url,  
+//                         url: request_data.url,
 //                         headers: oauth.toHeader(oauth.authorize(request_data, token))
-                        
+
 //                     },function(err, res, body) {
 //                         if (err) return reject(err);
-                        
+
 //                         try {
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }              
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -501,7 +504,7 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
 //     });
@@ -518,11 +521,11 @@ const OAuth = require('oauth-1.0a')
 //                 console.log(decryptedID)
 //                 return new Promise(function(resolve, reject){
 //                     request({
-                
+
 //                         headers: {
 //                             'Accept': 'application/x-www-form-urlencoded',
 //                             'Authorization': 'bearer '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent 
+//                             'User-Agent': req.body.data.user_agent
 //                         },
 //                         url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
 //                         method: 'POST',
@@ -533,7 +536,7 @@ const OAuth = require('oauth-1.0a')
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }           
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -541,7 +544,7 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
 //     });
@@ -558,7 +561,7 @@ const OAuth = require('oauth-1.0a')
 //                 console.log(decryptedID)
 //                 return new Promise(function(resolve, reject){
 //                     request({
-                
+
 //                         headers: {
 //                             'Accept': 'application/x-www-form-urlencoded',
 //                             'Authorization': 'Oauth '+req.body.data.access_token,
@@ -573,7 +576,7 @@ const OAuth = require('oauth-1.0a')
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }              
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -581,7 +584,7 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
 //     });
@@ -606,7 +609,7 @@ const OAuth = require('oauth-1.0a')
 //                         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
 //                     }
 //                 });
- 
+
 //                 const request_data = {
 //                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
 //                     method: 'POST',
@@ -616,22 +619,22 @@ const OAuth = require('oauth-1.0a')
 //                 const token = {
 //                     key: req.body.data.oauth_token,
 //                     secret: req.body.data.oauth_secret
-//                 }; 
-                
+//                 };
+
 //                 return new Promise(function(resolve, reject){
 //                     request({
 //                         method: request_data.method,
-//                         url: request_data.url,  
+//                         url: request_data.url,
 //                         headers: oauth.toHeader(oauth.authorize(request_data, token))
-                        
+
 //                     },function(err, res, body) {
 //                         if (err) return reject(err);
-                        
+
 //                         try {
 //                             resolve(JSON.parse(body));
 //                         } catch(e) {
 //                             reject(e);
-//                         }              
+//                         }
 //                     })
 //                 }).then(
 //                     (body)=>{
@@ -639,7 +642,7 @@ const OAuth = require('oauth-1.0a')
 //                     },(err)=>{
 //                         res.send(err)
 //                     }
-//                 )     
+//                 )
 //             }
 //         })
-//     });    
+//     });
