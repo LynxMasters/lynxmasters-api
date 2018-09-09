@@ -4,6 +4,7 @@ let path = '/api/v1';
 const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 const configAuth = require('../config/auth')
+require('dotenv').config({path:'./.env'})
 
 
 module.exports = (app) => {
