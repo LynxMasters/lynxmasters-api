@@ -169,9 +169,9 @@ module.exports = (app) => {
   // Avatar upload
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      let folder = process.env.NODE_ENV === 'dev'
-        ? process.env.DEV_UPLOAD_LOCATION
-        : process.env.PROD_UPLOAD_LOCATION
+      let folder = process.env.NODE_ENV === 'prod'
+        ? process.env.PROD_UPLOAD_LOCATION
+        : process.env.DEV_UPLOAD_LOCATION
       cb(null, folder)
     },
     filename: function (req, file, cb) {
