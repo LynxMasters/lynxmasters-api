@@ -2,29 +2,33 @@ module.exports = function(app) {
 const request = require ('request')
 const Tokens = require('../models/tokens')
 const crypto = require('crypto')
-const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
 const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
+require('dotenv').config({path:'./.env'})
+let link = process.env.REDIRECT
+let redditAUTH = process.env.REDDIT_AUTHORIZE
+let twitchAUTH = process.env.TWITCH_AUTHORIZE
+let secret = process.env.JWT
 
   app.get(`${path}/auth/reddit`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
       });
       req.session.state = crypto.randomBytes(32).toString('hex');
       req.session.token = decryptedToken
-      res.redirect(configAuth.reddit.authorizeURL + req.session.state);
+      res.redirect(redditAUTH + req.session.state);
     })
   });
 
   app.get(`${path}/auth/reddit/callback`, function(req, res) {
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -33,8 +37,7 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.reddit(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('https://lynxmasters.com/LinkAccounts')
-          // res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect(link)
         }
       }
     })
@@ -42,19 +45,19 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/auth/twitch`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
       });
       req.session.state = crypto.randomBytes(32).toString('hex');
       req.session.token = decryptedToken
-      res.redirect(configAuth.twitch.authorizeURL + req.session.state);
+      res.redirect(twitchAUTH + req.session.state);
     })
   });
 
   app.get(`${path}/auth/twitch/callback`, function(req, res) {
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -63,8 +66,7 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.twitch(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('https://lynxmasters.com/LinkAccounts')
-          // res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect(link)
         }
       }
     })
@@ -72,7 +74,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/auth/twitter`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -86,21 +88,20 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/auth/twitter/callback`, function(req, res) {
     console.log(req.session.token);
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
       })
       Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decoded.id)
       req.session.token.destroy
-      res.redirect('https://lynxmasters.com/LinkAccounts')
-      // res.redirect('http://localhost:8080/LinkAccounts')
+      res.redirect(link)
     })
   });
 
   app.get(`${path}/accounts/`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -126,7 +127,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/profiles/`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -155,7 +156,7 @@ const OAuth = require('oauth-1.0a')
 
     app.get(`${path}/profiles/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -178,7 +179,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/profiles/twitch`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -201,7 +202,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/profiles/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -224,7 +225,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/feeds/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -247,7 +248,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/feeds/twitch`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -270,7 +271,7 @@ const OAuth = require('oauth-1.0a')
 
   app.get(`${path}/feeds/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -294,7 +295,7 @@ const OAuth = require('oauth-1.0a')
   app.get(`${path}/comments/reddit`, (req, res) => {
     console.log(req.headers.authorization)
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -318,7 +319,7 @@ const OAuth = require('oauth-1.0a')
   app.post(`${path}/unlink/twitter/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -339,7 +340,7 @@ const OAuth = require('oauth-1.0a')
   app.post(`${path}/unlink/reddit/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -359,7 +360,7 @@ const OAuth = require('oauth-1.0a')
   app.post(`${path}/unlink/twitch/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -379,7 +380,7 @@ const OAuth = require('oauth-1.0a')
 //REFERENCE ONLY
 // app.post(`${path}/redditGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -417,7 +418,7 @@ const OAuth = require('oauth-1.0a')
 
 //     app.post(`${path}/twitchGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -455,7 +456,7 @@ const OAuth = require('oauth-1.0a')
 
 //     app.post(`${path}/twitterGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -511,7 +512,7 @@ const OAuth = require('oauth-1.0a')
 
 //         app.post(`${path}/redditPOST/`, (req, res) => {
 //         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -551,7 +552,7 @@ const OAuth = require('oauth-1.0a')
 
 //     app.post(`${path}/twitchPOST/`, (req, res) => {
 //         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
 //             if(error){
 //                 res.send(error)
 //             }
@@ -591,7 +592,7 @@ const OAuth = require('oauth-1.0a')
 
 //     app.post(`${path}/twitterPOST/`, (req, res) => {
 //         console.log(req.body)
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
