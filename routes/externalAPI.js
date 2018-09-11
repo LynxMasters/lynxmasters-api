@@ -9,6 +9,10 @@ let path = '/api/v1';
 const Accounts = require('../models/account')
 const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
+require('dotenv').config({path:'./.env'})
+let link = process.env.REDIRECT
+let redditAUTH = process.env.REDDIT_AUTHORIZE
+let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/auth/reddit`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
@@ -19,7 +23,7 @@ const OAuth = require('oauth-1.0a')
       });
       req.session.state = crypto.randomBytes(32).toString('hex');
       req.session.token = decryptedToken
-      res.redirect(configAuth.reddit.authorizeURL + req.session.state);
+      res.redirect(redditAUTH + req.session.state);
     })
   });
 
@@ -33,8 +37,7 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.reddit(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('https://lynxmasters.com/LinkAccounts')
-          // res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect(link)
         }
       }
     })
@@ -49,7 +52,7 @@ const OAuth = require('oauth-1.0a')
       });
       req.session.state = crypto.randomBytes(32).toString('hex');
       req.session.token = decryptedToken
-      res.redirect(configAuth.twitch.authorizeURL + req.session.state);
+      res.redirect(twitchAUTH + req.session.state);
     })
   });
 
@@ -63,8 +66,7 @@ const OAuth = require('oauth-1.0a')
         if (req.query.code) {
           Tokens.twitch(req.query.code, decoded.id)
           req.session.token.destroy
-          res.redirect('https://lynxmasters.com/LinkAccounts')
-          // res.redirect('http://localhost:8080/LinkAccounts')
+          res.redirect(link)
         }
       }
     })
@@ -93,8 +95,7 @@ const OAuth = require('oauth-1.0a')
       })
       Tokens.twitterAcs(req.query.oauth_token, req.query.oauth_verifier, decoded.id)
       req.session.token.destroy
-      res.redirect('https://lynxmasters.com/LinkAccounts')
-      // res.redirect('http://localhost:8080/LinkAccounts')
+      res.redirect(link)
     })
   });
 

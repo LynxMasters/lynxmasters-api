@@ -3,6 +3,16 @@ const crypto = require('crypto')
 const OAuth = require('oauth-1.0a')
 const jwt = require('jsonwebtoken');
 const Accounts = require('./account')
+require('dotenv').config({path:'./.env'})
+let redditID = process.env.REDDIT_CLIENT_ID
+let redditSecret = process.env.REDDIT_CLIENT_SECRET
+let redditCallback = process.env.REDDIT_CALLBACK
+let twitchID = process.env.TWITCH_CLIENT_ID
+let twitchSecret = process.env.TWITCH_CLIENT_SECRET
+let twitchCallback = process.env.TWITCH_CALLBACK
+let twitterID = process.env.TWITTER_CLIENT_ID
+let twitterSecret = process.env.TWITTER_CLIENT_SECRET
+let twitterCallback = process.env.TWITTER_CALLBACK
 
 
 module.exports = {    
@@ -70,8 +80,8 @@ module.exports = {
     twitterProfile: function(account){
         const oauth = OAuth({
             consumer: {
-                key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-                secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+                key: twitterID,
+                secret: twitterSecret
             },
             signature_method: 'HMAC-SHA1',
             hash_function(base_string, key) {
@@ -176,8 +186,8 @@ module.exports = {
     twitterFeed: function(account){
         const oauth = OAuth({
             consumer: {
-                key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-                secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+                key: twitterID,
+                secret: twitterSecret
             },
             signature_method: 'HMAC-SHA1',
             hash_function(base_string, key) {
@@ -318,8 +328,8 @@ module.exports = {
         console.log(result)
         const oauth = OAuth({
             consumer: {
-                key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-                secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
+                key: twitterID,
+                secret: twitchSecret
             },
             signature_method: 'HMAC-SHA1',
             hash_function(base_string, key) {

@@ -12,6 +12,7 @@ let config = require('../config/auth')
 let security = require('../utils/encryption-decryption')
 require('dotenv').config({path:'./config/sendgrid.env'})
 let Accounts = require('./account')
+let secret = process.env.JWT
 
 
 
@@ -175,7 +176,7 @@ function loginUser(req) {
               reject(err)
             } else {
               let userID = user._id.toString()  
-              let token = jwt.sign({ id: userID }, config.jwt.secret, {
+              let token = jwt.sign({ id: userID }, secret, {
                 expiresIn: 86400 // expires in 24 hours
               })
               let encryptedToken = security.encrypt(token)

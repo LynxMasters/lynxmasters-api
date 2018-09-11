@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 const configAuth = require('../config/auth')
 require('dotenv').config({path:'./.env'})
+let secret = process.env.JWT
 
 
 module.exports = (app) => {
@@ -150,7 +151,7 @@ module.exports = (app) => {
 
   app.post(`${path}/verify/token`, (req, res) => {
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
