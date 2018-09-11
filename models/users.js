@@ -302,6 +302,17 @@ function sendEmailVerification(user) {
   sgMail.send(msg)
 }
 
+function fetchID(username) {
+  return new Promise((resolve, reject) => {
+    Users.findOne({'username': username}, function (error, user) {
+      if (error) {
+        reject(error)
+      }
+      resolve(user)
+    })
+  })
+}
+
 module.exports = {
   addUser,
   fetchOne,
@@ -309,6 +320,7 @@ module.exports = {
   updateOne,
   removeOne,
   loginUser,
-  userVerificationCheck
+  userVerificationCheck,
+  fetchID
 }
 
