@@ -13,10 +13,11 @@ require('dotenv').config({path:'./.env'})
 let link = process.env.REDIRECT
 let redditAUTH = process.env.REDDIT_AUTHORIZE
 let twitchAUTH = process.env.TWITCH_AUTHORIZE
+let secret = process.env.JWT
 
   app.get(`${path}/auth/reddit`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -28,7 +29,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   });
 
   app.get(`${path}/auth/reddit/callback`, function(req, res) {
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -45,7 +46,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/auth/twitch`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -57,7 +58,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   });
 
   app.get(`${path}/auth/twitch/callback`, function(req, res) {
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -74,7 +75,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/auth/twitter`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(decryptedToken, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -88,7 +89,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/auth/twitter/callback`, function(req, res) {
     console.log(req.session.token);
-    jwt.verify(req.session.token, configAuth.jwt.secret, function(err, decoded) {
+    jwt.verify(req.session.token, secret, function(err, decoded) {
       if (err) return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -101,7 +102,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/accounts/`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -127,7 +128,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/profiles/`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -156,7 +157,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
     app.get(`${path}/profiles/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -179,7 +180,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/profiles/twitch`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -202,7 +203,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/profiles/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -225,7 +226,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/feeds/reddit`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -248,7 +249,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/feeds/twitch`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -271,7 +272,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
   app.get(`${path}/feeds/twitter`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -295,7 +296,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   app.get(`${path}/comments/reddit`, (req, res) => {
     console.log(req.headers.authorization)
     let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -319,7 +320,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   app.post(`${path}/unlink/twitter/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -340,7 +341,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   app.post(`${path}/unlink/reddit/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -360,7 +361,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
   app.post(`${path}/unlink/twitch/`, (req, res) => {
 
     let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
       if (error) {
         res.status(500).send({
           auth: false,
@@ -380,7 +381,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 //REFERENCE ONLY
 // app.post(`${path}/redditGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -418,7 +419,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
 //     app.post(`${path}/twitchGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -456,7 +457,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
 //     app.post(`${path}/twitterGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -512,7 +513,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
 //         app.post(`${path}/redditPOST/`, (req, res) => {
 //         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
@@ -552,7 +553,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
 //     app.post(`${path}/twitchPOST/`, (req, res) => {
 //         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'].toString(), configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
 //             if(error){
 //                 res.send(error)
 //             }
@@ -592,7 +593,7 @@ let twitchAUTH = process.env.TWITCH_AUTHORIZE
 
 //     app.post(`${path}/twitterPOST/`, (req, res) => {
 //         console.log(req.body)
-//         jwt.verify(req.headers['authorization'], configAuth.jwt.secret, function(error, decoded){
+//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
 //             if(error){
 //                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
 //             }
