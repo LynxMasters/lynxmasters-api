@@ -3,7 +3,6 @@ let multer  = require('multer')
 let path = '/api/v1';
 const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
-const configAuth = require('../config/auth')
 require('dotenv').config({path:'./.env'})
 let secret = process.env.JWT
 
@@ -38,7 +37,7 @@ module.exports = (app) => {
   app.get(`${path}/user/me`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
     console.log(decryptedToken)
-    jwt.verify(decryptedToken, configAuth.jwt.secret, function(error, decoded) {
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
         console.log(error)
       if (error) {
         res.status(500).send({
@@ -60,14 +59,26 @@ module.exports = (app) => {
 
   // Fetch all users
   app.get(`${path}/users`, (req, res) => {
-    Users.fetchAll().then(
-      (users) => {
-        res.send({users: users})
-      },
-      (err) => {
-        console.error(err)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function (error, decoded) {
+      if (error) {
+            res.status(500).send({
+                auth: false,
+                message: 'Failed to authenticate token.'
+            })
+            console.log(error)
+      } else {
+        Users.fetchAll()
+        .then(
+          (users) => {
+            res.send({users: users})
+          },
+          (err) => {
+            console.error(err)
+          }
+        )
       }
-    )
+    }) 
   })
 
   // Login user
@@ -112,7 +123,7 @@ module.exports = (app) => {
     app.put(`${path}/user/account`, (req, res) => {
         let decryptedToken = security.decrypt(req.headers.authorization)
         console.log(decryptedToken)
-        jwt.verify(decryptedToken, configAuth.jwt.secret, function (error, decoded) {
+        jwt.verify(decryptedToken, secret, function (error, decoded) {
             if (error) {
                 res.status(500).send({
                     auth: false,

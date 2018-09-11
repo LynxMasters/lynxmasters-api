@@ -2,7 +2,6 @@ module.exports = function(app) {
 const request = require ('request')
 const Tokens = require('../models/tokens')
 const crypto = require('crypto')
-const configAuth = require('../config/auth')
 const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
