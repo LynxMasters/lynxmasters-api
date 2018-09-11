@@ -10,6 +10,7 @@ const request = require ('request');
 let jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 require('dotenv').config({path:'./config/sendgrid.env'})
+require('dotenv').config({path:'./.env'})
 let Accounts = require('./account')
 let secret = process.env.JWT
 

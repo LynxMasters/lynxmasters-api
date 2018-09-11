@@ -59,6 +59,7 @@ module.exports = (app) => {
 
   // Fetch all users
   app.get(`${path}/users`, (req, res) => {
+    console.log(req.headers.authorization)
     let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, secret, function (error, decoded) {
       if (error) {
