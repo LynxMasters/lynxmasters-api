@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 let path = '/api/v1';
 const Accounts = require('../models/account')
+let Users = require("../models/users")
 const Request = require('../models/requests')
 const OAuth = require('oauth-1.0a')
 require('dotenv').config({path:'./.env'})
@@ -376,6 +377,88 @@ let secret = process.env.JWT
       }
     })
   });
+
+    app.get(`${path}/members/reddit`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Users.fetchID(req.query.username)
+          .then(user => {
+            console.log(user)
+            return Accounts.fetchOne(user._id)
+          })
+          .then(accounts => {
+            return Request.redditFeed(accounts)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.get(`${path}/members/twitch`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Users.fetchID(req.query.username)
+          .then(user => {
+            console.log(user)
+            return Accounts.fetchOne(user._id)
+          })
+          .then(accounts => {
+            return Request.twitchFeed(accounts)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.get(`${path}/members/twitter`, (req, res) => {
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Users.fetchID(req.query.username)
+          .then(user => {
+            console.log(user)
+            return Accounts.fetchOne(user._id)
+          })
+          .then(accounts => {
+            return Request.twitterFeed(accounts)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
 }
 //REFERENCE ONLY
 // app.post(`${path}/redditGET/`, (req, res) => {
