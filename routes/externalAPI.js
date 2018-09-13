@@ -477,7 +477,7 @@ let secret = process.env.JWT
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.redditVotes(result, req.)
+            return Request.redditVotes(result)
           })
           .then((result) => {
             res.send(result)
