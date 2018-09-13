@@ -393,6 +393,9 @@ let secret = process.env.JWT
             return Accounts.fetchOne(user._id)
           })
           .then(accounts => {
+            return Request.redditRFSH(accounts)
+          })
+          .then(accounts => {
             return Request.redditFeed(accounts)
           })
           .then((result) => {
@@ -418,6 +421,9 @@ let secret = process.env.JWT
           .then(user => {
             console.log(user)
             return Accounts.fetchOne(user._id)
+          })
+          .then(accounts => {
+            return Request.twitchRFSH(accounts)
           })
           .then(accounts => {
             return Request.twitchFeed(accounts)
@@ -448,6 +454,30 @@ let secret = process.env.JWT
           })
           .then(accounts => {
             return Request.twitterFeed(accounts)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/votes/reddit`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.redditVotes(result, req.)
           })
           .then((result) => {
             res.send(result)
