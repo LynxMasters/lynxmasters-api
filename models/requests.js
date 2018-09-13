@@ -257,6 +257,7 @@ module.exports = {
 
     redditVotes: function (account, vote) {
         console.log('RedditVotes')
+        console.log(vote)
         let data = 'id='+vote.id+'&dir='+vote.dir
         return new Promise((resolve, reject) => {
          if(account.reddit.linked){
@@ -266,7 +267,7 @@ module.exports = {
                         'Authorization': 'bearer '+account.reddit.access_token,
                         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                     },
-                    url: 'https://oauth.reddit.com/api/vote/'
+                    url: 'https://oauth.reddit.com/api/vote/',
                     method: 'POST',
                     body: data
                 }, function (err, res, body) {
@@ -287,9 +288,9 @@ module.exports = {
         })      
     },
 
-    redditComments: function (account, comment) {
+    redditComment: function (account, comment) {
         console.log('RedditComments')
-        let data = 'api_type=json&text='+comment+'thing_id=t3_'+comment.id
+        let data = 'api_type=json&text='+comment.text+'&thing_id='+comment.id
         return new Promise((resolve, reject) => {
          if(account.reddit.linked){
                 request({
@@ -298,14 +299,14 @@ module.exports = {
                         'Authorization': 'bearer '+account.reddit.access_token,
                         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                     },
-                    url: 'https://oauth.reddit.com/api/comment/'
+                    url: 'https://oauth.reddit.com/api/comment/',
                     method: 'POST',
                     body: data
                 }, function (err, res, body) {
                     let reddit = JSON.parse(body)
                     if(reddit.error) {
                         console.log('error reddit comments')
-                        resolve(reddit)
+                        resolve(reddit.error)
                     } else {
                         resolve(reddit)
                     }
