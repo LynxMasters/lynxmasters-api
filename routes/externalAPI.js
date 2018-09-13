@@ -465,7 +465,7 @@ let secret = process.env.JWT
     })
   });
 
-  app.post(`${path}/votes/reddit`, (req, res) => {
+  app.post(`${path}/vote/reddit`, (req, res) => {
     console.log(req.headers.authorization)
     let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, secret, function(error, decoded) {
@@ -477,7 +477,7 @@ let secret = process.env.JWT
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.redditVotes(result, req.body.data.id)
+            return Request.redditVotes(result, req.body.data.vote)
           })
           .then((result) => {
             res.send(result)

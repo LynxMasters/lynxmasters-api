@@ -371,4 +371,66 @@ module.exports = {
             })    
         })
     },
+
+    redditVotes: function (account, vote) {
+        console.log('RedditVotes')
+        let data = 'id='+vote.id+'&dir='+vote.ups
+        return new Promise((resolve, reject) => {
+            request({
+                headers: {
+                    'Accept': 'application/x-www-form-urlencoded',
+                    'Authorization': 'bearer '+account.reddit.access_token,
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                },
+                url: 'https://oauth.reddit.com/api/vote',
+                method: 'POST',
+                body: data
+            }, function (err, res, body) {
+                let reddit = JSON.parse(body)
+                var result = {
+                    account,
+                    reddit
+                }
+                if(reddit == '') {
+                    console.log('error')
+                    console.log(reddit)
+                    reject(err)
+                } else {
+                    console.log('true')
+                    resolve(result)
+                }
+            })
+        })    
+    },
+
+    redditComments: function (account, comment) {
+        console.log('RedditVotes')
+        let data = 'api_type=json&text='+comment+'thing_id=t3_'+comment.id
+        return new Promise((resolve, reject) => {
+            request({
+                headers: {
+                    'Accept': 'application/x-www-form-urlencoded',
+                    'Authorization': 'bearer '+account.reddit.access_token,
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                },
+                url: 'https://oauth.reddit.com/api/vote',
+                method: 'POST',
+                body: data
+            }, function (err, res, body) {
+                let reddit = JSON.parse(body)
+                var result = {
+                    account,
+                    reddit
+                }
+                if(reddit == '') {
+                    console.log('error')
+                    console.log(reddit)
+                    reject(err)
+                } else {
+                    console.log('true')
+                    resolve(result)
+                }
+            })
+        })    
+    },
 }    
