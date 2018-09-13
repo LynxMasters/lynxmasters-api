@@ -477,7 +477,103 @@ let secret = process.env.JWT
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.redditVotes(result)
+            return Request.redditVotes(result, req.body.data.id)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/comment/reddit`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.redditComment(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/comment/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterComment(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/favorite/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterFavorite(result, req.body.data.id)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/retweet/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterRetweet(result, req.body.data)
           })
           .then((result) => {
             res.send(result)
