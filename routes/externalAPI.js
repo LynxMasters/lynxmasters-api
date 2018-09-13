@@ -393,7 +393,7 @@ let secret = process.env.JWT
             return Accounts.fetchOne(user._id)
           })
           .then(accounts => {
-            return Request.redditRFSH(accounts)
+            return Tokens.redditRFSH(accounts)
           })
           .then(accounts => {
             return Request.redditFeed(accounts)
@@ -423,7 +423,7 @@ let secret = process.env.JWT
             return Accounts.fetchOne(user._id)
           })
           .then(accounts => {
-            return Request.twitchRFSH(accounts)
+            return Tokens.twitchRFSH(accounts)
           })
           .then(accounts => {
             return Request.twitchFeed(accounts)
