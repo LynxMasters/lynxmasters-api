@@ -319,4 +319,116 @@ module.exports = {
             }
         })  
     },
+
+    twitterFavorite: function(account, favorite){
+        let endpoint = null
+        if(favorite.favorited){
+            endpoint = "https://api.twitter.com/1.1/favorites/create.json?id="+favorite.id
+
+        }else{
+            endpoint = "https://api.twitter.com/1.1/favorites/destroy.json?id="+favorite.id
+        }
+        console.log(endpoint)
+        const oauth = OAuth({
+            consumer: {
+                key: twitterID,
+                secret: twitterSecret
+            },
+            signature_method: 'HMAC-SHA1',
+            hash_function(base_string, key) {
+                return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+            }
+        });
+ 
+        const request_data = {
+            url: endpoint,
+            method: 'POST'
+        };
+                
+        const token = {
+            key: account.twitter.oauth_token,
+            secret: account.twitter.oauth_secret
+        }; 
+                
+        return new Promise(function(resolve, reject){
+            if(account.twitter.linked){
+                request({
+                    method: request_data.method,
+                    url: request_data.url,  
+                    headers: oauth.toHeader(oauth.authorize(request_data, token))            
+                }, function (err, res, body) {
+                    let twitter = JSON.parse(body)
+                    console.log(twitter)
+                    if(twitter.error){
+                        console.log('error twitch feed')
+                        resolve(twitter)
+                    }else{
+                        resolve(twitter)  
+                    }
+                    
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }    
+        })
+    },
+
+    twitterRetweet: function(account, retweet){
+        let endpoint = null
+        if(retweet.retweeted){
+            endpoint = "https://api.twitter.com/1.1/statuses/retweet/"+retweet.id+".json"
+
+        }else{
+            endpoint = "https://api.twitter.com/1.1/statuses/unretweet/"+retweet.id+".json"
+        }
+        console.log(endpoint)
+        const oauth = OAuth({
+            consumer: {
+                key: twitterID,
+                secret: twitterSecret
+            },
+            signature_method: 'HMAC-SHA1',
+            hash_function(base_string, key) {
+                return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+            }
+        });
+ 
+        const request_data = {
+            url: endpoint,
+            method: 'POST'
+        };
+                
+        const token = {
+            key: account.twitter.oauth_token,
+            secret: account.twitter.oauth_secret
+        }; 
+                
+        return new Promise(function(resolve, reject){
+            if(account.twitter.linked){
+                request({
+                    method: request_data.method,
+                    url: request_data.url,  
+                    headers: oauth.toHeader(oauth.authorize(request_data, token))            
+                }, function (err, res, body) {
+                    let twitter = JSON.parse(body)
+                    console.log(twitter)
+                    if(twitter.error){
+                        console.log('error twitch feed')
+                        resolve(twitter)
+                    }else{
+                        resolve(twitter)  
+                    }
+                    
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }    
+        })
+    },    
 }    

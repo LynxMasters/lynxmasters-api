@@ -550,7 +550,7 @@ let secret = process.env.JWT
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.twitterFavorite(result, req.body.data.id)
+            return Request.twitterFavorite(result, req.body.data)
           })
           .then((result) => {
             res.send(result)
