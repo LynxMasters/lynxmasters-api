@@ -35,14 +35,26 @@ module.exports = (app) => {
   })
 
   app.get(`${path}/member`, (req, res) => {
-    Users.fetchMember(req.query.username).then(
-      (user) => {
-        res.send(user)
-      },
-      (err) => {
-        console.error(err)
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function (error, decoded) {
+      if (error) {
+            res.status(500).send({
+                auth: false,
+                message: 'Failed to authenticate token.'
+            })
+            console.log(error)
+      } else {
+        Users.fetchMember(req.query.username).then(
+          (user) => {
+            res.send(user)
+          },
+          (err) => {
+            console.error(err)
+          }
+        )
       }
-    )
+    })
   })
 
 
