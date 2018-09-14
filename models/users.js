@@ -319,7 +319,11 @@ function fetchMember(username) {
       if (error) {
         reject(error)
       }
-      resolve(user)
+      let member = {
+        username: user.username,
+        avatar: user.avatar,  
+      }
+      resolve(member)
     })
   })
 }
