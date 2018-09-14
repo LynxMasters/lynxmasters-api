@@ -4,15 +4,9 @@ const OAuth = require('oauth-1.0a')
 const jwt = require('jsonwebtoken');
 const Accounts = require('./account')
 require('dotenv').config({path:'./.env'})
-let redditID = process.env.REDDIT_CLIENT_ID
-let redditSecret = process.env.REDDIT_CLIENT_SECRET
-let redditCallback = process.env.REDDIT_CALLBACK
-let twitchID = process.env.TWITCH_CLIENT_ID
-let twitchSecret = process.env.TWITCH_CLIENT_SECRET
-let twitchCallback = process.env.TWITCH_CALLBACK
 let twitterID = process.env.TWITTER_CLIENT_ID
 let twitterSecret = process.env.TWITTER_CLIENT_SECRET
-let twitterCallback = process.env.TWITTER_CALLBACK
+
 
 
 module.exports = {    
@@ -230,7 +224,7 @@ module.exports = {
             }    
         })
     },
-
+//*********************POSTS**************************
     redditComments: function (account, id36) {
         return new Promise((resolve, reject) => {
             if(account.reddit.linked){
@@ -260,76 +254,85 @@ module.exports = {
         })   
     },
 
-//*********************Friends**************************
-    redditFriends: function (account, user_agent) {
-        console.log('RedditProfile')
+
+    redditVotes: function (account, vote) {
+        console.log('RedditVotes')
+        console.log(vote)
+        let data = 'id='+vote.id+'&dir='+vote.dir
         return new Promise((resolve, reject) => {
-            request({
-                headers: {
-                    'Accept': 'application/x-www-form-urlencoded',
-                    'Authorization': 'bearer '+account.reddit.access_token,
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
-                },
-                url: 'https://oauth.reddit.com/api/v1/me',
-                method: 'GET',
-            }, function (err, res, body) {
-                let reddit = JSON.parse(body)
-                var result = {
-                    account,
-                    reddit
+         if(account.reddit.linked){
+                request({
+                    headers: {
+                        'Accept': 'application/x-www-form-urlencoded',
+                        'Authorization': 'bearer '+account.reddit.access_token,
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                    },
+                    url: 'https://oauth.reddit.com/api/vote/',
+                    method: 'POST',
+                    body: data
+                }, function (err, res, body) {
+                    let reddit = JSON.parse(body)
+                    if(reddit.error) {
+                        console.log('error reddit votes')
+                        resolve(reddit)
+                    } else {
+                        resolve(reddit)
+                    }
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
                 }
-                if(reddit == '') {
-                    console.log('error')
-                    console.log(reddit)
-                    reject(err)
-                } else {
-                    console.log('true')
-                    resolve(result)
-                }
-            })
-        })    
+                resolve(error)
+            }
+        })      
     },
 
-    twitchFriends: function (result, user_agent) {
-        console.log('TwitchProfile')
-        console.log(result)
+    redditComment: function (account, comment) {
+        console.log('RedditComments')
+        let data = 'api_type=json&text='+comment.text+'&thing_id='+comment.id
         return new Promise((resolve, reject) => {
-            request({
-                headers: {
-                    'Accept': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Oauth '+result.account.twitch.access_token,
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'    
-                },
-                url: 'https://api.twitch.tv/kraken/user?oauth_token='+result.account.twitch.access_token,
-                method: 'GET',
-            }, function (err, res, body) {
-                let twitch = JSON.parse(body)
-                let account = result.account
-                let reddit = result.reddit
-                let result2 = {
-                    account,
-                    reddit,
-                    twitch
-                    
+         if(account.reddit.linked){
+                request({
+                    headers: {
+                        'Accept': 'application/x-www-form-urlencoded',
+                        'Authorization': 'bearer '+account.reddit.access_token,
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                    },
+                    url: 'https://oauth.reddit.com/api/comment/',
+                    method: 'POST',
+                    body: data
+                }, function (err, res, body) {
+                    let reddit = JSON.parse(body)
+                    if(reddit.error) {
+                        console.log('error reddit comments')
+                        resolve(reddit.error)
+                    } else {
+                        resolve(reddit)
+                    }
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
                 }
-                if (twitch == '') {
-                    console.log('error')
-                    console.log(twitch)
-                    reject(err)
-                } else {
-                    console.log('true')
-                    resolve(result2)
-                }
-            })
-        })    
+                resolve(error)
+            }
+        })  
     },
 
-    twitterFriends: function(result){
-        console.log(result)
+    twitterFavorite: function(account, favorite){
+        let endpoint = null
+        if(favorite.favorited){
+            endpoint = "https://api.twitter.com/1.1/favorites/create.json?id="+favorite.id
+
+        }else{
+            endpoint = "https://api.twitter.com/1.1/favorites/destroy.json?id="+favorite.id
+        }
+        console.log(endpoint)
         const oauth = OAuth({
             consumer: {
                 key: twitterID,
-                secret: twitchSecret
+                secret: twitterSecret
             },
             signature_method: 'HMAC-SHA1',
             hash_function(base_string, key) {
@@ -338,37 +341,94 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/users/show.json?screen_name='+result.account.twitter.displayName,
-            method: 'GET'
+            url: endpoint,
+            method: 'POST'
         };
                 
         const token = {
-            key: result.account.twitter.oauth_token,
-            secret: result.account.twitter.oauth_secret
+            key: account.twitter.oauth_token,
+            secret: account.twitter.oauth_secret
         }; 
                 
         return new Promise(function(resolve, reject){
-            request({
-                method: request_data.method,
-                url: request_data.url,  
-                headers: oauth.toHeader(oauth.authorize(request_data, token))            
-            }, function (err, res, body) {
-                
-                if (err) return reject(err);
-                console.log(body)     
-               
-                let twitter = JSON.parse(body)
-                let account = result.account
-                let reddit = result.reddit
-                let twitch = result.twitch
-                let result3 = {
-                    reddit,
-                    twitch,
-                    twitter
+            if(account.twitter.linked){
+                request({
+                    method: request_data.method,
+                    url: request_data.url,  
+                    headers: oauth.toHeader(oauth.authorize(request_data, token))            
+                }, function (err, res, body) {
+                    let twitter = JSON.parse(body)
+                    console.log(twitter)
+                    if(twitter.error){
+                        console.log('error twitch feed')
+                        resolve(twitter)
+                    }else{
+                        resolve(twitter)  
                     }
-
-                resolve(result3)
-            })    
+                    
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }    
         })
     },
+
+    twitterRetweet: function(account, retweet){
+        let endpoint = null
+        if(retweet.retweeted){
+            endpoint = "https://api.twitter.com/1.1/statuses/retweet/"+retweet.id+".json"
+
+        }else{
+            endpoint = "https://api.twitter.com/1.1/statuses/unretweet/"+retweet.id+".json"
+        }
+        console.log(endpoint)
+        const oauth = OAuth({
+            consumer: {
+                key: twitterID,
+                secret: twitterSecret
+            },
+            signature_method: 'HMAC-SHA1',
+            hash_function(base_string, key) {
+                return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+            }
+        });
+ 
+        const request_data = {
+            url: endpoint,
+            method: 'POST'
+        };
+                
+        const token = {
+            key: account.twitter.oauth_token,
+            secret: account.twitter.oauth_secret
+        }; 
+                
+        return new Promise(function(resolve, reject){
+            if(account.twitter.linked){
+                request({
+                    method: request_data.method,
+                    url: request_data.url,  
+                    headers: oauth.toHeader(oauth.authorize(request_data, token))            
+                }, function (err, res, body) {
+                    let twitter = JSON.parse(body)
+                    console.log(twitter)
+                    if(twitter.error){
+                        console.log('error twitch feed')
+                        resolve(twitter)
+                    }else{
+                        resolve(twitter)  
+                    }
+                    
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }    
+        })
+    },    
 }    

@@ -465,7 +465,7 @@ let secret = process.env.JWT
     })
   });
 
-  app.post(`${path}/votes/reddit`, (req, res) => {
+  app.post(`${path}/vote/reddit`, (req, res) => {
     console.log(req.headers.authorization)
     let decryptedToken = security.decrypt(req.headers.authorization)
     jwt.verify(decryptedToken, secret, function(error, decoded) {
@@ -477,7 +477,104 @@ let secret = process.env.JWT
       } else {
         Accounts.fetchOne(decoded.id)
           .then(result => {
-            return Request.redditVotes(result)
+            return Request.redditVotes(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/comment/reddit`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            console.log(req.body.data)
+            return Request.redditComment(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/comment/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterComment(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/favorite/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterFavorite(result, req.body.data)
+          })
+          .then((result) => {
+            res.send(result)
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  });
+
+  app.post(`${path}/retweet/twitter`, (req, res) => {
+    console.log(req.headers.authorization)
+    let decryptedToken = security.decrypt(req.headers.authorization)
+    jwt.verify(decryptedToken, secret, function(error, decoded) {
+      if (error) {
+        res.status(500).send({
+          auth: false,
+          message: 'Failed to authenticate token.'
+        })
+      } else {
+        Accounts.fetchOne(decoded.id)
+          .then(result => {
+            return Request.twitterRetweet(result, req.body.data)
           })
           .then((result) => {
             res.send(result)
@@ -490,273 +587,4 @@ let secret = process.env.JWT
   });
 
 }
-//REFERENCE ONLY
-// app.post(`${path}/redditGET/`, (req, res) => {
 
-//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
-//             if(error){
-//                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-//             }
-//             else{
-
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 return new Promise(function(resolve, reject){
-//                     request({
-
-//                         headers: {
-//                             'Accept': 'application/x-www-form-urlencoded',
-//                             'Authorization': 'bearer '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent
-//                         },
-//                         url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
-//                         method: 'GET',
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
-
-//     app.post(`${path}/twitchGET/`, (req, res) => {
-
-//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
-//             if(error){
-//                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-//             }
-//             else{
-
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 return new Promise(function(resolve, reject){
-//                     request({
-
-//                         headers: {
-//                             'Accept': 'application/x-www-form-urlencoded',
-//                             'Authorization': 'Oauth '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent,
-//                         },
-//                         url: 'https://api.twitch.tv/kraken'+req.body.data.endpoint,
-//                         method: 'GET',
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
-
-//     app.post(`${path}/twitterGET/`, (req, res) => {
-
-//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
-//             if(error){
-//                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-//             }
-//             else{
-
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 const oauth = OAuth({
-//                     consumer: {
-//                         key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-//                         secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
-//                     },
-//                     signature_method: 'HMAC-SHA1',
-//                     hash_function(base_string, key) {
-//                         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
-//                     }
-//                 });
-
-//                 const request_data = {
-//                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
-//                     method: 'GET'
-//                 };
-
-//                 const token = {
-//                     key: req.body.data.oauth_token,
-//                     secret: req.body.data.oauth_secret
-//                 };
-
-//                 return new Promise(function(resolve, reject){
-//                     request({
-//                         method: request_data.method,
-//                         url: request_data.url,
-//                         headers: oauth.toHeader(oauth.authorize(request_data, token))
-
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
-
-//         app.post(`${path}/redditPOST/`, (req, res) => {
-//         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
-//             if(error){
-//                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-//             }
-//             else{
-//                 console.log(decoded)
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 console.log(decryptedID)
-//                 return new Promise(function(resolve, reject){
-//                     request({
-
-//                         headers: {
-//                             'Accept': 'application/x-www-form-urlencoded',
-//                             'Authorization': 'bearer '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent
-//                         },
-//                         url: 'https://oauth.reddit.com/api/v1'+req.body.data.endpoint,
-//                         method: 'POST',
-//                         form: req.body.data.params
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
-
-//     app.post(`${path}/twitchPOST/`, (req, res) => {
-//         console.log(req.body.data)
-//         jwt.verify(req.headers['authorization'].toString(), secret, function(error, decoded){
-//             if(error){
-//                 res.send(error)
-//             }
-//             else{
-//                 console.log(decoded)
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 console.log(decryptedID)
-//                 return new Promise(function(resolve, reject){
-//                     request({
-
-//                         headers: {
-//                             'Accept': 'application/x-www-form-urlencoded',
-//                             'Authorization': 'Oauth '+req.body.data.access_token,
-//                             'User-Agent': req.body.data.user_agent,
-//                         },
-//                         url: 'https://api.twitch.tv/kraken'+req.body.data.endpoint,
-//                         method: 'POST',
-//                         form: req.body.data.params
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
-
-//     app.post(`${path}/twitterPOST/`, (req, res) => {
-//         console.log(req.body)
-//         jwt.verify(req.headers['authorization'], secret, function(error, decoded){
-//             if(error){
-//                 res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
-//             }
-//             else{
-//                 console.log(decoded)
-//                 let decryptedID = security.decrypt(decoded.id)
-//                 console.log(decryptedID)
-//                 const oauth = OAuth({
-//                     consumer: {
-//                         key: 'm9y0YNJfgwJafm5qKeMhu7xgC',
-//                         secret: 'unSRzTB4KchtD1lb23zMn9xcWvErukoTtdjradDHp6YvGiND3g'
-//                     },
-//                     signature_method: 'HMAC-SHA1',
-//                     hash_function(base_string, key) {
-//                         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
-//                     }
-//                 });
-
-//                 const request_data = {
-//                     url: 'https://api.twitter.com/1.1'+req.body.data.endpoint,
-//                     method: 'POST',
-//                     form: req.body.data.params
-//                 };
-//                 console.log(req.body.data.oauth_secret)
-//                 const token = {
-//                     key: req.body.data.oauth_token,
-//                     secret: req.body.data.oauth_secret
-//                 };
-
-//                 return new Promise(function(resolve, reject){
-//                     request({
-//                         method: request_data.method,
-//                         url: request_data.url,
-//                         headers: oauth.toHeader(oauth.authorize(request_data, token))
-
-//                     },function(err, res, body) {
-//                         if (err) return reject(err);
-
-//                         try {
-//                             resolve(JSON.parse(body));
-//                         } catch(e) {
-//                             reject(e);
-//                         }
-//                     })
-//                 }).then(
-//                     (body)=>{
-//                         res.send(body)
-//                     },(err)=>{
-//                         res.send(err)
-//                     }
-//                 )
-//             }
-//         })
-//     });
