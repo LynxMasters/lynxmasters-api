@@ -34,6 +34,18 @@ module.exports = (app) => {
     )
   })
 
+  app.get(`${path}/member`, (req, res) => {
+    Users.fetchMember(req.query.username).then(
+      (user) => {
+        res.send(user)
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  })
+
+
   app.get(`${path}/user/me`, (req, res) => {
     let decryptedToken = security.decrypt(req.headers.authorization)
     console.log(decryptedToken)

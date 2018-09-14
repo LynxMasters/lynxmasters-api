@@ -313,6 +313,17 @@ function fetchID(username) {
   })
 }
 
+function fetchMember(username) {
+  return new Promise((resolve, reject) => {
+    Users.findOne({'username': username}, function (error, user) {
+      if (error) {
+        reject(error)
+      }
+      resolve(user)
+    })
+  })
+}
+
 module.exports = {
   addUser,
   fetchOne,
@@ -321,6 +332,7 @@ module.exports = {
   removeOne,
   loginUser,
   userVerificationCheck,
-  fetchID
+  fetchID,
+  fetchMember
 }
 
