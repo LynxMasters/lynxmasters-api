@@ -4,6 +4,7 @@ let path = '/api/v1';
 const jwt = require('jsonwebtoken');
 let security = require('../utils/encryption-decryption')
 require('dotenv').config({path:'./.env'})
+const UIDGenerator = require('uid-generator')
 let secret = process.env.JWT
 
 
@@ -204,6 +205,7 @@ module.exports = (app) => {
   
 
   // Avatar upload
+  const uidgen = new UIDGenerator(null, UIDGenerator.BASE62)
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
       let folder = process.env.NODE_ENV === 'prod'
@@ -213,8 +215,7 @@ module.exports = (app) => {
     },
     filename: function (req, file, cb) {
       let ext = file.originalname.substr(file.originalname.lastIndexOf('.') + 1)
-      console.log('extension = ' + req.body.user+'.'+ext)
-      cb(null, req.body.user+'.'+ext)
+      cb(null, req.body.user + uidgen.generateSync(UIDGenerator.BASE16) + '.' + ext)
     }
   })
 
