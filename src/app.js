@@ -8,7 +8,7 @@ const app = express()
 const mongoose = require('mongoose')
 const fs = require('fs');
 const path = require('path')
-require('dotenv').config()
+require('dotenv').config({path:'./.env'})
 
 app.use(logger('combined'))
 app.use(bodyParser.json())
@@ -18,6 +18,7 @@ app.use(cors())
 
 let key = fs.readFileSync(path.join(__dirname,'../client.pem'))
 let ca = fs.readFileSync(path.join(__dirname,'../ca.pem'))
+let DBCONN = process.env.DB
 
 let options = {
     ssl:true,
@@ -27,7 +28,7 @@ let options = {
     useNewUrlParser: true
 };
 
-mongoose.connect('mongodb://dev:k5pc94tzqv24@54.166.208.12:27017/lynxmasters',options)
+mongoose.connect(DBCONN,options)
 let db = mongoose.connection
 db.on("error", console.error.bind(console, "connection error"))
 db.once("open", function(callback){
