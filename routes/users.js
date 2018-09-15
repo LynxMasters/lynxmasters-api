@@ -52,7 +52,9 @@ module.exports = (app) => {
           (err) => {
             console.error(err)
           }
-        )
+        ).catch(function (error) {
+            return error
+        })
       }
     })
   })
