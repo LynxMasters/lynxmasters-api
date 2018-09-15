@@ -318,12 +318,16 @@ function fetchMember(username) {
     Users.findOne({'username': username}, function (error, user) {
       if (error) {
         reject(error)
+      }else if(!user){
+        error
+        reject(error)
+      }else{
+        let member = {
+          username: user.username,
+          avatar: user.avatar,  
+        }
+        resolve(member)
       }
-      let member = {
-        username: user.username,
-        avatar: user.avatar,  
-      }
-      resolve(member)
     })
   })
 }
