@@ -105,6 +105,9 @@ let verifyToken = require('../auth/verify')
   
     Accounts.fetchOne(req.id)
       .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
         return Request.redditProfile(result)
       })
       .then((result) => {
@@ -118,6 +121,9 @@ let verifyToken = require('../auth/verify')
   app.get(`${path}/profiles/twitch`,verifyToken, (req, res) => {
      
     Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.twitchRFSH(result)
+      })
       .then(result => {
         return Request.twitchProfile(result)
       })
@@ -148,6 +154,9 @@ let verifyToken = require('../auth/verify')
 
     Accounts.fetchOne(req.id)
       .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
         return Request.redditFeed(result)
       })
       .then((result) => {
@@ -161,6 +170,9 @@ let verifyToken = require('../auth/verify')
   app.get(`${path}/feeds/twitch`,verifyToken, (req, res) => {
         
     Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.twitchRFSH(result)
+      })    
       .then(result => {
         return Request.twitchFeed(result)
       })
@@ -190,6 +202,9 @@ let verifyToken = require('../auth/verify')
   app.get(`${path}/comments/reddit`,verifyToken, (req, res) => {
 
     Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
       .then(result => {
         return Request.redditComments(result, req.query.id36)
       })
@@ -297,6 +312,9 @@ let verifyToken = require('../auth/verify')
     
     Accounts.fetchOne(req.id)
       .then(result => {
+        return Tokens.redditRFSH(result)
+      })    
+      .then(result => {
         return Request.redditVotes(result, req.body.data)
       })
       .then((result) => {
@@ -310,6 +328,9 @@ let verifyToken = require('../auth/verify')
   app.post(`${path}/comment/reddit`,verifyToken, (req, res) => {
     
     Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })    
       .then(result => {
         console.log(req.body.data)
         return Request.redditComment(result, req.body.data)
