@@ -127,7 +127,36 @@ module.exports = {
                         'Authorization': 'bearer '+account.reddit.access_token,
                         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
                     },
-                    url: 'https://oauth.reddit.com/hot?show=all&limit=100',
+                    url: 'https://oauth.reddit.com/hot?show=all&limit=25',
+                    method: 'GET',
+                }, function (err, res, body) {
+                    let reddit = JSON.parse(body)
+                    if(reddit.error) {
+                        console.log('error reddit feed')
+                        resolve(reddit)
+                    } else {
+                        resolve(reddit)
+                    }
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }
+        })   
+    },
+
+    redditFeedMore: function (account, id36) {
+        return new Promise((resolve, reject) => {
+            if(account.reddit.linked){
+                request({
+                    headers: {
+                        'Accept': 'application/x-www-form-urlencoded',
+                        'Authorization': 'bearer '+account.reddit.access_token,
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0.'
+                    },
+                    url: 'https://oauth.reddit.com/hot?show=all&after='+id36,
                     method: 'GET',
                 }, function (err, res, body) {
                     let reddit = JSON.parse(body)
@@ -190,7 +219,55 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=100',
+            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=25',
+            method: 'GET'
+        };
+                
+        const token = {
+            key: account.twitter.oauth_token,
+            secret: account.twitter.oauth_secret
+        }; 
+                
+        return new Promise(function(resolve, reject){
+            if(account.twitter.linked){
+                request({
+                    method: request_data.method,
+                    url: request_data.url,  
+                    headers: oauth.toHeader(oauth.authorize(request_data, token))            
+                }, function (err, res, body) {
+                    
+                    let twitter = JSON.parse(body)
+                    if(twitter.error){
+                        console.log('error twitch feed')
+                        resolve(twitter)
+                    }else{
+                        resolve(twitter)  
+                    }
+                    
+                })
+            }else{
+                let error = {
+                    error: 'unlinked'
+                }
+                resolve(error)
+            }    
+        })
+    },
+
+    twitterFeedMore: function(account){
+        const oauth = OAuth({
+            consumer: {
+                key: twitterID,
+                secret: twitterSecret
+            },
+            signature_method: 'HMAC-SHA1',
+            hash_function(base_string, key) {
+                return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+            }
+        });
+ 
+        const request_data = {
+            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=25',
             method: 'GET'
         };
                 

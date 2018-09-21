@@ -167,6 +167,23 @@ let verifyToken = require('../auth/verify')
       })
   })
 
+  app.get(`${path}/feeds/reddit/more`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
+        return Request.redditFeedMore(result, req.query.id36)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
   app.get(`${path}/feeds/twitch`,verifyToken, (req, res) => {
         
     Accounts.fetchOne(req.id)
