@@ -220,7 +220,7 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=25',
+            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=20',
             method: 'GET'
         };
                 
@@ -255,7 +255,7 @@ module.exports = {
         })
     },
 
-    twitterFeedMore: function(account){
+    twitterFeedMore: function(account, maxID){
         const oauth = OAuth({
             consumer: {
                 key: twitterID,
@@ -268,7 +268,7 @@ module.exports = {
         });
  
         const request_data = {
-            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=25',
+            url: 'https://api.twitter.com/1.1/statuses/home_timeline.json?count=20&max_id='+maxID,
             method: 'GET'
         };
                 

@@ -215,6 +215,19 @@ let verifyToken = require('../auth/verify')
       })
   })
 
+  app.get(`${path}/feeds/twitter/more`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterFeedMore(result, req.query.maxID)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
   app.get(`${path}/comments/reddit`,verifyToken, (req, res) => {
 
