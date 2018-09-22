@@ -14,6 +14,7 @@ let link = process.env.REDIRECT
 let redditAUTH = process.env.REDDIT_AUTHORIZE
 let twitchAUTH = process.env.TWITCH_AUTHORIZE
 let secret = process.env.JWT
+let verifyToken = require('../auth/verify')
 
   app.get(`${path}/auth/reddit`, function(req, res) {
     let decryptedToken = security.decrypt(req.query.token)
@@ -100,491 +101,319 @@ let secret = process.env.JWT
     })
   });
 
-  app.get(`${path}/accounts/`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Tokens.redditRFSH(result)
-          })
-          .then(result => {
-            return Tokens.twitchRFSH(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
+  app.get(`${path}/profiles/reddit`,verifyToken, (req, res) => {
+  
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
+        return Request.redditProfile(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/profiles/twitch`,verifyToken, (req, res) => {
+     
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.twitchRFSH(result)
+      })
+      .then(result => {
+        return Request.twitchProfile(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })    
+  })
+
+  app.get(`${path}/profiles/twitter`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterProfile(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })    
+  })
+
+
+  app.get(`${path}/feeds/reddit`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
+        return Request.redditFeed(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/feeds/reddit/more`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
+        return Request.redditFeedMore(result, req.query.id36)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/feeds/twitch`,verifyToken, (req, res) => {
+        
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.twitchRFSH(result)
+      })    
+      .then(result => {
+        return Request.twitchFeed(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/feeds/twitter`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterFeed(result)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/feeds/twitter/more`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterFeedMore(result, req.query.maxID)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+  app.get(`${path}/comments/reddit`,verifyToken, (req, res) => {
+
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })
+      .then(result => {
+        return Request.redditComments(result, req.query.id36)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
+
+
+  app.post(`${path}/unlink/twitter/`,verifyToken, (req, res) => {
+
+    Accounts.deleteAccountTwitter(req.id)
+      .then((result) => {
+        res.send(result)
+      }, (err) => {
+        res.send(err)
+      })     
+  })
+
+
+  app.post(`${path}/unlink/reddit/`,verifyToken, (req, res) => {
+
+    Accounts.deleteAccountReddit(decoded.id)
+      .then((result) => {
+        res.send(result)
+      }, (err) => {
+        res.send(err)
+      })
+  })
+
+  app.post(`${path}/unlink/twitch/`,verifyToken, (req, res) => {
+
+    Accounts.deleteAccountTwitch(decoded.id)
+      .then((result) => {
+        res.send(result)
+      }, (err) => {
+        res.send(err)
+      })
+  })
+
+  app.get(`${path}/members/reddit`,verifyToken, (req, res) => {
+
+    Users.fetchID(req.query.username)
+      .then(user => {
+        console.log(user)
+        return Accounts.fetchOne(user._id)
+      })
+      .then(accounts => {
+        return Tokens.redditRFSH(accounts)
+      })
+      .then(accounts => {
+        return Request.redditFeed(accounts)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
     })
-  });
 
-  app.get(`${path}/profiles/`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.redditProfile(result)
-          })
-          .then(result => {
-            return Request.twitchProfile(result)
-          })
-          .then(result => {
-            return Request.twitterProfile(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.get(`${path}/members/twitch`,verifyToken, (req, res) => {
 
-    app.get(`${path}/profiles/reddit`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.redditProfile(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+    Users.fetchID(req.query.username)
+      .then(user => {
+        console.log(user)
+        return Accounts.fetchOne(user._id)
+      })
+      .then(accounts => {
+        return Tokens.twitchRFSH(accounts)
+      })
+      .then(accounts => {
+        return Request.twitchFeed(accounts)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })    
+  })
 
-  app.get(`${path}/profiles/twitch`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitchProfile(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.get(`${path}/members/twitter`,verifyToken, (req, res) => {
 
-  app.get(`${path}/profiles/twitter`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitterProfile(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+    Users.fetchID(req.query.username)
+      .then(user => {
+        console.log(user)
+        return Accounts.fetchOne(user._id)
+      })
+      .then(accounts => {
+        return Request.twitterFeed(accounts)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
-  app.get(`${path}/feeds/reddit`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.redditFeed(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.post(`${path}/vote/reddit`,verifyToken, (req, res) => {
+    
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })    
+      .then(result => {
+        return Request.redditVotes(result, req.body.data)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
-  app.get(`${path}/feeds/twitch`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitchFeed(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.post(`${path}/comment/reddit`,verifyToken, (req, res) => {
+    
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Tokens.redditRFSH(result)
+      })    
+      .then(result => {
+        console.log(req.body.data)
+        return Request.redditComment(result, req.body.data)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
-  app.get(`${path}/feeds/twitter`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitterFeed(result)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.post(`${path}/comment/twitter`,verifyToken, (req, res) => {
+    
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterComment(result, req.body.data)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
-  app.get(`${path}/comments/reddit`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.redditComments(result, req.query.id36)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
+  app.post(`${path}/favorite/twitter`,verifyToken, (req, res) => {
 
-  app.post(`${path}/unlink/twitter/`, (req, res) => {
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterFavorite(result, req.body.data)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })
+  })
 
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        console.log(decoded.id)
-        Accounts.deleteAccountTwitter(decoded.id)
-          .then((result) => {
-            res.send(result)
-          }, (err) => {
-            res.send(err)
-          })
-      }
-    })
-  });
 
-  app.post(`${path}/unlink/reddit/`, (req, res) => {
+  app.post(`${path}/retweet/twitter`,verifyToken, (req, res) => {
 
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.deleteAccountReddit(decoded.id)
-          .then((result) => {
-            res.send(result)
-          }, (err) => {
-            res.send(err)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/unlink/twitch/`, (req, res) => {
-
-    let decryptedToken = security.decrypt(req.body.headers.Authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.deleteAccountTwitch(decoded.id)
-          .then((result) => {
-            res.send(result)
-          }, (err) => {
-            res.send(err)
-          })
-      }
-    })
-  });
-
-    app.get(`${path}/members/reddit`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Users.fetchID(req.query.username)
-          .then(user => {
-            console.log(user)
-            return Accounts.fetchOne(user._id)
-          })
-          .then(accounts => {
-            return Tokens.redditRFSH(accounts)
-          })
-          .then(accounts => {
-            return Request.redditFeed(accounts)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.get(`${path}/members/twitch`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Users.fetchID(req.query.username)
-          .then(user => {
-            console.log(user)
-            return Accounts.fetchOne(user._id)
-          })
-          .then(accounts => {
-            return Tokens.twitchRFSH(accounts)
-          })
-          .then(accounts => {
-            return Request.twitchFeed(accounts)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.get(`${path}/members/twitter`, (req, res) => {
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Users.fetchID(req.query.username)
-          .then(user => {
-            console.log(user)
-            return Accounts.fetchOne(user._id)
-          })
-          .then(accounts => {
-            return Request.twitterFeed(accounts)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/vote/reddit`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.redditVotes(result, req.body.data)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/comment/reddit`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            console.log(req.body.data)
-            return Request.redditComment(result, req.body.data)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/comment/twitter`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitterComment(result, req.body.data)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/favorite/twitter`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitterFavorite(result, req.body.data)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
-  app.post(`${path}/retweet/twitter`, (req, res) => {
-    console.log(req.headers.authorization)
-    let decryptedToken = security.decrypt(req.headers.authorization)
-    jwt.verify(decryptedToken, secret, function(error, decoded) {
-      if (error) {
-        res.status(500).send({
-          auth: false,
-          message: 'Failed to authenticate token.'
-        })
-      } else {
-        Accounts.fetchOne(decoded.id)
-          .then(result => {
-            return Request.twitterRetweet(result, req.body.data)
-          })
-          .then((result) => {
-            res.send(result)
-          })
-          .catch(error =>{
-            console.log(error)
-          })
-      }
-    })
-  });
-
+    Accounts.fetchOne(req.id)
+      .then(result => {
+        return Request.twitterRetweet(result, req.body.data)
+      })
+      .then((result) => {
+        res.send(result)
+      })
+      .catch(error =>{
+        console.log(error)
+      })   
+  })
 }
 
